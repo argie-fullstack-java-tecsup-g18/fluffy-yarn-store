@@ -44,5 +44,4 @@ Thumbs.db
 ### Logs y datos ###
 *.log
 /data/
-*.sql
 *.dump
