@@ -5,7 +5,7 @@ import com.fluffyyarn.store.security.domain.model.role.Role;
 import java.time.LocalDateTime;
 
 public class User {
-  private Integer id; // Por qué el profe usa LONG?
+  private Integer id; // TODO: Preguntar: por qué el profe usa LONG?
   private String username;
   private String password;
   private Boolean isEnabled;
