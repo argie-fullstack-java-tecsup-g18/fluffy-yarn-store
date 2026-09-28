@@ -1,4 +1,4 @@
-package com.fluffyyarn.store.security.domain.model;
+package com.fluffyyarn.store.security.domain.model.role;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

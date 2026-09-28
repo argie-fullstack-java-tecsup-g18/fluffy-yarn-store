@@ -1,6 +1,6 @@
-package com.fluffyyarn.store.security.infrastructure.adapter.in;
+package com.fluffyyarn.store.security.infrastructure.adapter.in.role;
 
-import com.fluffyyarn.store.security.domain.model.RoleName;
+import com.fluffyyarn.store.security.domain.model.role.RoleName;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;

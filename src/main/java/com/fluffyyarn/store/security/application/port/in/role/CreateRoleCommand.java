@@ -1,10 +1,12 @@
-package com.fluffyyarn.store.security.application.port.in;
+package com.fluffyyarn.store.security.application.port.in.role;
 
-import com.fluffyyarn.store.security.domain.model.RoleName;
+import com.fluffyyarn.store.security.domain.model.role.RoleName;
 import lombok.*;
 
-// TODO: preguntar al profe por qué usó setters si esta clase no tendría que mutar?
+// El Command es la lista de parámetros que necesita (QUIEN??) sin las partes que el cliente no controla.
+// El cliente no sabe el id (lo pone la DB) ni debe construir objetos de dominio.
 //Un Command es datos de entrada: se crea, se pasa al caso de uso y se descarta. No debería poder mutarse después
+// TODO: preguntar al profe por qué usó setters si esta clase no tendría que mutar?
 // TODO - Por que no es un RECORD?
 
 // (TODO: Verificar solo este comentario) Command que especifica los atributos que necesita un Role

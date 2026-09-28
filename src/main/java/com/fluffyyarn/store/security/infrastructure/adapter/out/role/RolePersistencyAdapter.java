@@ -1,8 +1,8 @@
-package com.fluffyyarn.store.security.infrastructure.adapter.out;
+package com.fluffyyarn.store.security.infrastructure.adapter.out.role;
 
-import com.fluffyyarn.store.security.application.port.out.RoleRepositoryPort;
-import com.fluffyyarn.store.security.domain.model.Role;
-import com.fluffyyarn.store.security.domain.model.RoleName;
+import com.fluffyyarn.store.security.application.port.out.role.RoleRepositoryPort;
+import com.fluffyyarn.store.security.domain.model.role.Role;
+import com.fluffyyarn.store.security.domain.model.role.RoleName;
 import com.fluffyyarn.store.security.infrastructure.entities.RoleEntity;
 import org.springframework.stereotype.Component;
 

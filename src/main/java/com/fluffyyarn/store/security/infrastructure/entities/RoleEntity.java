@@ -1,6 +1,6 @@
 package com.fluffyyarn.store.security.infrastructure.entities;
 
-import com.fluffyyarn.store.security.domain.model.RoleName;
+import com.fluffyyarn.store.security.domain.model.role.RoleName;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

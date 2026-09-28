@@ -1,11 +1,13 @@
-package com.fluffyyarn.store.security.application.port.in;
+package com.fluffyyarn.store.security.application.port.in.role;
 
 import com.fluffyyarn.store.security.domain.exception.RoleNotFoundException;
-import com.fluffyyarn.store.security.domain.model.Role;
-import com.fluffyyarn.store.security.domain.model.RoleName;
+import com.fluffyyarn.store.security.domain.model.role.Role;
+import com.fluffyyarn.store.security.domain.model.role.RoleName;
 
 import java.util.List;
 
+// En los casos de uso se declaran qué operaciones existen antes de decidir cómo se hacen.
+// Sin esto, el controller no sabría a qué llamar.
 // (TODO: revisar solo comentario) Contrato que especifica los parametros que necesita un Role para devolverlos según el método llamado
 public interface GetRoleUseCase {
   Role findById(Long roleId) throws RoleNotFoundException;

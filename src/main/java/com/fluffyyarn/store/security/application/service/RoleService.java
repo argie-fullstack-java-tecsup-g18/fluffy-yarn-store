@@ -1,18 +1,19 @@
 package com.fluffyyarn.store.security.application.service;
 
-import com.fluffyyarn.store.security.application.port.in.CreateRoleCommand;
-import com.fluffyyarn.store.security.application.port.in.CreateRoleUseCase;
-import com.fluffyyarn.store.security.application.port.in.GetRoleUseCase;
-import com.fluffyyarn.store.security.application.port.out.RoleRepositoryPort;
+import com.fluffyyarn.store.security.application.port.in.role.CreateRoleCommand;
+import com.fluffyyarn.store.security.application.port.in.role.CreateRoleUseCase;
+import com.fluffyyarn.store.security.application.port.in.role.GetRoleUseCase;
+import com.fluffyyarn.store.security.application.port.out.role.RoleRepositoryPort;
 import com.fluffyyarn.store.security.domain.exception.RoleNotFoundException;
-import com.fluffyyarn.store.security.domain.model.Role;
-import com.fluffyyarn.store.security.domain.model.RoleName;
+import com.fluffyyarn.store.security.domain.model.role.Role;
+import com.fluffyyarn.store.security.domain.model.role.RoleName;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 // El servicio hace las implementaciones de los casos de uso
+// El servicio es el que orquesta.
 @Service
 public class RoleService implements CreateRoleUseCase, GetRoleUseCase {
 

@@ -1,6 +1,6 @@
-package com.fluffyyarn.store.security.infrastructure.adapter.out;
+package com.fluffyyarn.store.security.infrastructure.adapter.out.role;
 
-import com.fluffyyarn.store.security.domain.model.Role;
+import com.fluffyyarn.store.security.domain.model.role.Role;
 import com.fluffyyarn.store.security.infrastructure.entities.RoleEntity;
 
 public class RolePersistencyMapper {

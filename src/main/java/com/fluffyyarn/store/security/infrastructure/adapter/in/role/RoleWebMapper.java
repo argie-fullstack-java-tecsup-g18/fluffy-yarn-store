@@ -1,7 +1,7 @@
-package com.fluffyyarn.store.security.infrastructure.adapter.in;
+package com.fluffyyarn.store.security.infrastructure.adapter.in.role;
 
-import com.fluffyyarn.store.security.application.port.in.CreateRoleCommand;
-import com.fluffyyarn.store.security.domain.model.Role;
+import com.fluffyyarn.store.security.application.port.in.role.CreateRoleCommand;
+import com.fluffyyarn.store.security.domain.model.role.Role;
 
 import java.util.List;
 
@@ -17,10 +17,12 @@ public class RoleWebMapper {
     );
   }
 
+  // Puerta SALIDA -
   public static List<RoleDto> toRoleDtoList(List<Role> roles) {
     return roles.stream().map(RoleWebMapper::toRoleDto).toList();
   }
 
+  // Puerta ENTRADA - necesita crear una instancia del Command
   public static CreateRoleCommand toCommand(RoleDto request) {
     return new CreateRoleCommand(request.getName(), request.getDescription());
 
