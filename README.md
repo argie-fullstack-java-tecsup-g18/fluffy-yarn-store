@@ -115,3 +115,19 @@ Cosas detectadas durante la preparación del repositorio, pendientes a propósit
 - [ ] **`spring.jpa.show-sql=true` está activo.** Ruidoso para producción. Cuando se
       implemente la separación de perfiles, moverlo a un perfil `dev`.
 - [ ] `HELP.md` se ignora en `.gitignore`; su información ya está en este README.
+
+### Deuda técnica acumulada
+
+Detectados al implementar el módulo `security` (pasos 4-11 de la guía de Notion):
+
+- [ ] **La tabla se llama `roles`, no `role`.** El `@Table(name = "roles")` de
+      `RoleEntity` no coincide con el `Table role` del DBML original. Definir
+      cuál es el nombre oficial.
+- [ ] **Endpoints de `Role` sin autenticación.** `POST /roles` es un endpoint de
+      administración expuesto. Al agregar Spring Security debe quedar restringido
+      a `ROLE_ADMIN`.
+- [ ] **La tabla `role` necesita seed.** `ddl-auto=update` crea la tabla vacía,
+      pero los 4 roles (`ROLE_ADMIN`, `ROLE_CUSTOMER`, `ROLE_SELLER`,
+      `ROLE_WAREHOUSE`) deben existir como datos. Con Flyway será una migración.
+- [ ] **Falta `UpdateRoleUseCase`.** Pendiente según la guía de Notion del profe
+      (paso 5.1): modifica la descripción o el nombre de un rol existente.
