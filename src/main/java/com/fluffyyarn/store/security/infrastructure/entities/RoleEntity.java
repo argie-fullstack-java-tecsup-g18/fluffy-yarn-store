@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 //Este es el que se comunica con la DB. Aquí si entra Spring Boot.
 @Entity(name = "Role")
-@Table(name = "roles")
+@Table(name = "role")
 @Getter // Lombok - Genera los getters.
 @Setter // Lombok - Genera los setters que JPA usa para hidratar la entidad.
 @NoArgsConstructor // Lombok - Constructor vacío. JPA lo necesita para instanciar la clase por reflexión.
@@ -18,7 +18,7 @@ public class RoleEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private Short id;
 
   @Enumerated(EnumType.STRING)
   private RoleName name;

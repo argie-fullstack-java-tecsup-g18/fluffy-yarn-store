@@ -33,7 +33,7 @@ public class RolePersistencyAdapter implements RoleRepositoryPort {
   }
 
   @Override
-  public Optional<Role> findById(Long roleId) {
+  public Optional<Role> findById(Short roleId) {
     return this.roleJpaRepository.findById(roleId).map(RolePersistencyMapper::toRole);
   }
 

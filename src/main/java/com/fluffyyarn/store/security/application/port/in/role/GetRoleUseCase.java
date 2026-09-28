@@ -10,7 +10,7 @@ import java.util.List;
 // Sin esto, el controller no sabría a qué llamar.
 // (TODO: revisar solo comentario) Contrato que especifica los parametros que necesita un Role para devolverlos según el método llamado
 public interface GetRoleUseCase {
-  Role findById(Long roleId) throws RoleNotFoundException;
+  Role findById(Short roleId) throws RoleNotFoundException;
 
   Role findByName(RoleName roleName);
 

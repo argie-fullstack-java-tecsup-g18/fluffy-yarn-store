@@ -35,7 +35,7 @@ public class RoleService implements CreateRoleUseCase, GetRoleUseCase {
 
   // TODO: Preguntarle al profe si también se puede ubicar aquí el throws RoleNotFoundException para que el método sepa que hace un throws en caso de que falle
   @Override
-  public Role findById(Long roleId) throws RoleNotFoundException {
+  public Role findById(Short roleId) throws RoleNotFoundException {
     Optional<Role> optionalRole = this.repository.findById(roleId);
     if (optionalRole.isEmpty())
       throw new RoleNotFoundException("Role with" + roleId + "not found.");

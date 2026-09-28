@@ -38,7 +38,7 @@ public class RoleController {
   }
 
   @GetMapping("/{id}")
-  public RoleDto findById(@PathVariable Long id) {
+  public RoleDto findById(@PathVariable Short id) {
     return RoleWebMapper.toRoleDto(this.getRoleUseCase.findById(id));
   }
 }

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor // Lombok - Genera el constructor con todos los atributos.
 @Builder // Lombok - Permite crear objetos de dominio con un patrón Builder de forma limpia y fluida. Útil en Arquitectura Hexagonal.
 public class Role {
-  private Long id;
+  private Short id;
   private RoleName name;
   private String description;
   private LocalDateTime createdAt;

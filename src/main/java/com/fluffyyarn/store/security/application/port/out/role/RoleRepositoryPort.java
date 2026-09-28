@@ -15,7 +15,7 @@ public interface RoleRepositoryPort {
 
   List<Role> findAll();
 
-  Optional<Role> findById(Long roleId);
+  Optional<Role> findById(Short roleId);
 
   Optional<Role> findByName(RoleName roleName);
 }

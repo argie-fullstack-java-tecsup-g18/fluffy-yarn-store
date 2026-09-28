@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor // Lombok - Constructor con todos los campos, lo usa el mapper.
 public class RoleDto {
 
-  private Long id; // lo devuelve la API, no lo manda el front
+  private Short id; // lo devuelve la API, no lo manda el front
 
   @NotNull(message = "El nombre del rol es obligatorio")
   private RoleName name;
