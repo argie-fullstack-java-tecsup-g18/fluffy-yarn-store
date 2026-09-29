@@ -37,9 +37,8 @@ public class RolePersistencyAdapter implements RoleRepositoryPort {
     return this.roleJpaRepository.findById(roleId).map(RolePersistencyMapper::toRole);
   }
 
-  // TODO: implementar bien este método findByName
   @Override
   public Optional<Role> findByName(RoleName roleName) {
-    return Optional.empty();
+    return this.roleJpaRepository.findByName(roleName).map(RolePersistencyMapper::toRole);
   }
 }
