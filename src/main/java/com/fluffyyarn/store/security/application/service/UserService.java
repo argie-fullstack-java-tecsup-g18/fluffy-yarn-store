@@ -35,17 +35,19 @@ public class UserService implements RegisterUserUseCase, CreateUserUseCase, Auth
 
   @Override
   public User findById(Integer id) throws UserNotFoundException {
-    return null;
+    return this.repository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found."));
   }
 
   @Override
   public User findByUsername(String username) throws UserNotFoundException {
-    return null;
+    return this.repository.findByUsername(username)
+        .orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found."));
   }
 
   @Override
   public List<User> findAll() {
-    return List.of();
+    return this.repository.findAll();
   }
 
   @Override
@@ -55,6 +57,9 @@ public class UserService implements RegisterUserUseCase, CreateUserUseCase, Auth
 
   @Override
   public void toggleUserStatus(ToggleUserStatusCommand cmd) {
-
+    User user = this.repository.findByUsername(cmd.getUsername())
+        .orElseThrow(() -> new UserNotFoundException("User with username " + cmd.getUsername() + " not found."));
+    user.setIsEnabled(cmd.getIsEnabled());
+    this.repository.save(user);
   }
 }
