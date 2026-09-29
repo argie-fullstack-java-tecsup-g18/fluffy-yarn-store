@@ -131,3 +131,5 @@ Detectados al implementar el módulo `security` (pasos 4-11 de la guía de Notio
       `ROLE_WAREHOUSE`) deben existir como datos. Con Flyway será una migración.
 - [ ] **Falta `UpdateRoleUseCase`.** Pendiente según la guía de Notion del profe
       (paso 5.1): modifica la descripción o el nombre de un rol existente.
+- [ ] **Falta `UpdateUserUseCase`.** Análogo al `UpdateRoleUseCase`: actualiza el
+      `username` o el `role` de un usuario existente.
