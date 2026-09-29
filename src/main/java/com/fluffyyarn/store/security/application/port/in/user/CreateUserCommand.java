@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-// Para el ROLE_ADMIN
+// Para el ADMIN
 @Getter
 @AllArgsConstructor
 @Builder
