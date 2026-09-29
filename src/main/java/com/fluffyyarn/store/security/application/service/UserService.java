@@ -1,8 +1,11 @@
 package com.fluffyyarn.store.security.application.service;
 
 import com.fluffyyarn.store.security.application.port.in.user.*;
+import com.fluffyyarn.store.security.application.port.out.role.RoleRepositoryPort;
 import com.fluffyyarn.store.security.application.port.out.user.UserRepositoryPort;
+import com.fluffyyarn.store.security.domain.exception.RoleNotFoundException;
 import com.fluffyyarn.store.security.domain.exception.UserNotFoundException;
+import com.fluffyyarn.store.security.domain.model.role.Role;
 import com.fluffyyarn.store.security.domain.model.user.User;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,15 +13,46 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-//@Service
+@Service
 public class UserService implements RegisterUserUseCase, CreateUserUseCase, AuthenticateUserUseCase, ChangeUserPasswordUseCase, ToggleUserStatusUseCase, GetUserUseCase {
 
   UserRepositoryPort repository;
   PasswordEncoder passwordEncoder;
+  RoleRepositoryPort roleRepository;
 
-  public UserService(UserRepositoryPort repository, PasswordEncoder passwordEncoder) {
+  public UserService(
+      UserRepositoryPort repository,
+      PasswordEncoder passwordEncoder,
+      RoleRepositoryPort roleRepository) {
     this.repository = repository;
     this.passwordEncoder = passwordEncoder;
+    this.roleRepository = roleRepository;
+  }
+
+  // Para admins
+  @Override
+  public User createUser(CreateUserCommand cmd) {
+    Role role = this.roleRepository.findByName(cmd.getRoleName())
+        .orElseThrow(() -> new RoleNotFoundException(
+            "Role with name " + cmd.getRoleName() + " not found."));
+    User user = User.builder()
+        .username(cmd.getUsername())
+        .password(this.passwordEncoder.encode(cmd.getPassword()))
+        .isEnabled(true)
+        .role(role)
+        .build();
+    return this.repository.save(user);
+  }
+
+  // Para customers
+  @Override
+  public User registerUser(RegisterUserCommand cmd) {
+    User user = User.builder()
+        .username(cmd.getUsername())
+        .password(this.passwordEncoder.encode(cmd.getPassword()))
+        .isEnabled(true)
+        .build();
+    return this.repository.save(user);
   }
 
   @Override
@@ -34,12 +68,19 @@ public class UserService implements RegisterUserUseCase, CreateUserUseCase, Auth
 
   @Override
   public void changeUserPassword(ChangeUserPasswordCommand cmd) {
-
+    User user = this.repository.findByUsername(cmd.getUsername())
+        .orElseThrow(() -> new UserNotFoundException(
+            "User with username " + cmd.getUsername() + " not found."));
+    user.setPassword(this.passwordEncoder.encode(cmd.getNewPassword()));
+    this.repository.save(user);
   }
 
   @Override
-  public User createUser(CreateUserCommand cmd) {
-    return null;
+  public void toggleUserStatus(ToggleUserStatusCommand cmd) {
+    User user = this.repository.findByUsername(cmd.getUsername())
+        .orElseThrow(() -> new UserNotFoundException("User with username " + cmd.getUsername() + " not found."));
+    user.setIsEnabled(cmd.getIsEnabled());
+    this.repository.save(user);
   }
 
   @Override
@@ -57,18 +98,5 @@ public class UserService implements RegisterUserUseCase, CreateUserUseCase, Auth
   @Override
   public List<User> findAll() {
     return this.repository.findAll();
-  }
-
-  @Override
-  public User registerUser(RegisterUserCommand cmd) {
-    return null;
-  }
-
-  @Override
-  public void toggleUserStatus(ToggleUserStatusCommand cmd) {
-    User user = this.repository.findByUsername(cmd.getUsername())
-        .orElseThrow(() -> new UserNotFoundException("User with username " + cmd.getUsername() + " not found."));
-    user.setIsEnabled(cmd.getIsEnabled());
-    this.repository.save(user);
   }
 }
