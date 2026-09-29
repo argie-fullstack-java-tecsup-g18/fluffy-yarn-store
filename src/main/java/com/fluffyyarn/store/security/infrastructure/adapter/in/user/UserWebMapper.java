@@ -9,11 +9,11 @@ import java.util.List;
 // El DTO nunca toca la base de datos y los Commands nunca se exponen al cliente.
 public class UserWebMapper {
 
-  public static UserDto toUserDto(User user) {
-    return new UserDto(
+  // Oculta el hash para que no viaje al cliente
+  public static UserResponseDto toUserResponseDto(User user) {
+    return new UserResponseDto(
         user.getId(),
         user.getUsername(),
-        user.getPassword(),
         user.getIsEnabled(),
         user.getRole() != null ? user.getRole().getName() : null,
         user.getCreatedAt(),
@@ -21,8 +21,8 @@ public class UserWebMapper {
     );
   }
 
-  public static List<UserDto> toUserDtoList(List<User> users) {
-    return users.stream().map(UserWebMapper::toUserDto).toList();
+  public static List<UserResponseDto> toUserResponseDtoList(List<User> users) {
+    return users.stream().map(UserWebMapper::toUserResponseDto).toList();
   }
 
   public static CreateUserCommand toCreateCommand(UserDto request) {

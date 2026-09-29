@@ -32,21 +32,21 @@ public class UserController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public UserDto register(@Valid @RequestBody UserDto request) {
-    return UserWebMapper.toUserDto(this.registerUserUseCase.registerUser(
+  public UserResponseDto register(@Valid @RequestBody UserDto request) {
+    return UserWebMapper.toUserResponseDto(this.registerUserUseCase.registerUser(
         UserWebMapper.toRegisterCommand(request)));
   }
 
   @PostMapping("/create")
   @ResponseStatus(HttpStatus.CREATED)
-  public UserDto create(@Valid @RequestBody UserDto request) {
-    return UserWebMapper.toUserDto(this.createUserUseCase.createUser(
+  public UserResponseDto create(@Valid @RequestBody UserDto request) {
+    return UserWebMapper.toUserResponseDto(this.createUserUseCase.createUser(
         UserWebMapper.toCreateCommand(request)));
   }
 
   @PostMapping("/authenticate")
-  public UserDto authenticate(@Valid @RequestBody UserDto request) {
-    return UserWebMapper.toUserDto(this.authenticateUserUseCase.authenticateUser(
+  public UserResponseDto authenticate(@Valid @RequestBody UserDto request) {
+    return UserWebMapper.toUserResponseDto(this.authenticateUserUseCase.authenticateUser(
         UserWebMapper.toAuthenticateCommand(request)));
   }
 
@@ -65,17 +65,17 @@ public class UserController {
   }
 
   @GetMapping
-  public List<UserDto> findAll() {
-    return UserWebMapper.toUserDtoList(this.getUserUseCase.findAll());
+  public List<UserResponseDto> findAll() {
+    return UserWebMapper.toUserResponseDtoList(this.getUserUseCase.findAll());
   }
 
   @GetMapping("/{id}")
-  public UserDto findById(@PathVariable Integer id) {
-    return UserWebMapper.toUserDto(this.getUserUseCase.findById(id));
+  public UserResponseDto findById(@PathVariable Integer id) {
+    return UserWebMapper.toUserResponseDto(this.getUserUseCase.findById(id));
   }
 
   @GetMapping("/username/{username}")
-  public UserDto findByUsername(@PathVariable String username) {
-    return UserWebMapper.toUserDto(this.getUserUseCase.findByUsername(username));
+  public UserResponseDto findByUsername(@PathVariable String username) {
+    return UserWebMapper.toUserResponseDto(this.getUserUseCase.findByUsername(username));
   }
 }
