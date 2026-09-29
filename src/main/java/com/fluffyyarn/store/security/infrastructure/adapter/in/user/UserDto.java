@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Data // Lombok - Genera getters, setters, toString, equals y hashCode.
 @NoArgsConstructor // Lombok - Constructor vacío. Jackson lo necesita para deserializar el JSON que llega del front.
 @AllArgsConstructor // Lombok - Constructor con todos los campos, lo usa el mapper.
-public class UserDTO {
+public class UserDto {
 
   private Integer id; // lo devuelve la API, no lo manda el front
 

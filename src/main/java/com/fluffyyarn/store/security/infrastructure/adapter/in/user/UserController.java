@@ -32,50 +32,50 @@ public class UserController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public UserDTO register(@Valid @RequestBody UserDTO request) {
-    return UserWebMapper.toUserDTO(this.registerUserUseCase.registerUser(
+  public UserDto register(@Valid @RequestBody UserDto request) {
+    return UserWebMapper.toUserDto(this.registerUserUseCase.registerUser(
         UserWebMapper.toRegisterCommand(request)));
   }
 
   @PostMapping("/create")
   @ResponseStatus(HttpStatus.CREATED)
-  public UserDTO create(@Valid @RequestBody UserDTO request) {
-    return UserWebMapper.toUserDTO(this.createUserUseCase.createUser(
+  public UserDto create(@Valid @RequestBody UserDto request) {
+    return UserWebMapper.toUserDto(this.createUserUseCase.createUser(
         UserWebMapper.toCreateCommand(request)));
   }
 
   @PostMapping("/authenticate")
-  public UserDTO authenticate(@Valid @RequestBody UserDTO request) {
-    return UserWebMapper.toUserDTO(this.authenticateUserUseCase.authenticateUser(
+  public UserDto authenticate(@Valid @RequestBody UserDto request) {
+    return UserWebMapper.toUserDto(this.authenticateUserUseCase.authenticateUser(
         UserWebMapper.toAuthenticateCommand(request)));
   }
 
   @PatchMapping("/password")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void changePassword(@Valid @RequestBody UserDTO request) {
+  public void changePassword(@Valid @RequestBody UserDto request) {
     this.changeUserPasswordUseCase.changeUserPassword(
         UserWebMapper.toChangePasswordCommand(request));
   }
 
   @PatchMapping("/status")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void toggleStatus(@Valid @RequestBody UserDTO request) {
+  public void toggleStatus(@Valid @RequestBody UserDto request) {
     this.toggleUserStatusUseCase.toggleUserStatus(
         UserWebMapper.toToggleStatusCommand(request));
   }
 
   @GetMapping
-  public List<UserDTO> findAll() {
-    return UserWebMapper.toUserDTOList(this.getUserUseCase.findAll());
+  public List<UserDto> findAll() {
+    return UserWebMapper.toUserDtoList(this.getUserUseCase.findAll());
   }
 
   @GetMapping("/{id}")
-  public UserDTO findById(@PathVariable Integer id) {
-    return UserWebMapper.toUserDTO(this.getUserUseCase.findById(id));
+  public UserDto findById(@PathVariable Integer id) {
+    return UserWebMapper.toUserDto(this.getUserUseCase.findById(id));
   }
 
   @GetMapping("/username/{username}")
-  public UserDTO findByUsername(@PathVariable String username) {
-    return UserWebMapper.toUserDTO(this.getUserUseCase.findByUsername(username));
+  public UserDto findByUsername(@PathVariable String username) {
+    return UserWebMapper.toUserDto(this.getUserUseCase.findByUsername(username));
   }
 }
