@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -25,6 +26,7 @@ public class RoleEntity {
 
   private String description;
 
+  @CreationTimestamp // Para setear el timestamp.
   private LocalDateTime createdAt;
 
   // Constructor sin id: lo usa el mapper para crear la entidad desde el dominio.

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -28,7 +30,10 @@ public class UserEntity {
   @Column(name = "is_enabled")
   private Boolean isEnabled;
 
+  @CreationTimestamp // Para setear el timestamp.
   private LocalDateTime createdAt;
+
+  @UpdateTimestamp // Para setear el timestamp.
   private LocalDateTime updatedAt;
 
   public UserEntity(
