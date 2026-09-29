@@ -1,8 +1,8 @@
 package com.fluffyyarn.store.security.domain.model.role;
 
 public enum RoleName {
-  ROLE_ADMIN,
-  ROLE_CUSTOMER,
-  ROLE_SELLER,
-  ROLE_WAREHOUSE
+  ADMIN,
+  CUSTOMER,
+  SELLER,
+  WAREHOUSE
 }
