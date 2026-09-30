@@ -6,6 +6,7 @@ import com.fluffyyarn.store.security.application.port.out.user.UserRepositoryPor
 import com.fluffyyarn.store.security.domain.exception.RoleNotFoundException;
 import com.fluffyyarn.store.security.domain.exception.UserNotFoundException;
 import com.fluffyyarn.store.security.domain.model.role.Role;
+import com.fluffyyarn.store.security.domain.model.role.RoleName;
 import com.fluffyyarn.store.security.domain.model.user.User;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -47,10 +48,16 @@ public class UserService implements RegisterUserUseCase, CreateUserUseCase, Auth
   // Para customers
   @Override
   public User registerUser(RegisterUserCommand cmd) {
+    // El rol lo decide el sistema, no el cliente: un registro público no puede
+    // auto-asignarse ADMIN. Por eso el endpoint de registro no recibe roleName.
+    Role role = this.roleRepository.findByName(RoleName.CUSTOMER)
+        .orElseThrow(() -> new RoleNotFoundException(
+            "Role with name " + RoleName.CUSTOMER + " not found."));
     User user = User.builder()
         .username(cmd.getUsername())
         .password(this.passwordEncoder.encode(cmd.getPassword()))
         .isEnabled(true)
+        .role(role)
         .build();
     return this.repository.save(user);
   }
@@ -79,7 +86,7 @@ public class UserService implements RegisterUserUseCase, CreateUserUseCase, Auth
   public void toggleUserStatus(ToggleUserStatusCommand cmd) {
     User user = this.repository.findByUsername(cmd.getUsername())
         .orElseThrow(() -> new UserNotFoundException("User with username " + cmd.getUsername() + " not found."));
-    user.setIsEnabled(cmd.getIsEnabled());
+    user.setEnabled(cmd.isEnabled());
     this.repository.save(user);
   }
 

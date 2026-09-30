@@ -8,15 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
-// Aquí se hacen las validaciones de los campos que llegan del front.
-@Data // Lombok - Genera getters, setters, toString, equals y hashCode.
-@NoArgsConstructor // Lombok - Constructor vacío. Jackson lo necesita para deserializar el JSON que llega del front.
-@AllArgsConstructor // Lombok - Constructor con todos los campos, lo usa el mapper.
-public class UserDto {
-
-  private Integer id; // lo devuelve la API, no lo manda el front
+// Alta de un usuario hecha por un admin.
+// A diferencia del registro público, acá el admin sí elige el rol.
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CreateUserDto {
 
   @NotBlank(message = "El username es obligatorio")
   @Size(min = 3, max = 50, message = "El username debe tener entre 3 y 50 caracteres")
@@ -26,11 +23,6 @@ public class UserDto {
   @Size(min = 8, message = "El password debe tener al menos 8 caracteres")
   private String password;
 
-  private Boolean isEnabled;
-
   @NotNull(message = "El rol es obligatorio")
   private RoleName roleName;
-
-  private LocalDateTime createdAt;
-  private LocalDateTime updatedAt;
 }

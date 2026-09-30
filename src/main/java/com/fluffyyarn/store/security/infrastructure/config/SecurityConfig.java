@@ -2,6 +2,7 @@ package com.fluffyyarn.store.security.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -19,6 +20,9 @@ public class SecurityConfig {
     http
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
+            // El registro es público: cualquiera se da de alta y sale como CUSTOMER.
+            // Solo POST; el resto de /users (create, authenticate, listar) sigue protegido.
+            .requestMatchers(HttpMethod.POST, "/users").permitAll()
             .anyRequest().authenticated())
         .httpBasic(Customizer.withDefaults());
 

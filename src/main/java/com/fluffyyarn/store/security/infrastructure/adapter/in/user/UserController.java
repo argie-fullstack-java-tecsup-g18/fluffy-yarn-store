@@ -32,34 +32,34 @@ public class UserController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public UserResponseDto register(@Valid @RequestBody UserDto request) {
+  public UserResponseDto register(@Valid @RequestBody RegisterUserDto request) {
     return UserWebMapper.toUserResponseDto(this.registerUserUseCase.registerUser(
         UserWebMapper.toRegisterCommand(request)));
   }
 
   @PostMapping("/create")
   @ResponseStatus(HttpStatus.CREATED)
-  public UserResponseDto create(@Valid @RequestBody UserDto request) {
+  public UserResponseDto create(@Valid @RequestBody CreateUserDto request) {
     return UserWebMapper.toUserResponseDto(this.createUserUseCase.createUser(
         UserWebMapper.toCreateCommand(request)));
   }
 
   @PostMapping("/authenticate")
-  public UserResponseDto authenticate(@Valid @RequestBody UserDto request) {
+  public UserResponseDto authenticate(@Valid @RequestBody AuthenticateUserDto request) {
     return UserWebMapper.toUserResponseDto(this.authenticateUserUseCase.authenticateUser(
         UserWebMapper.toAuthenticateCommand(request)));
   }
 
   @PatchMapping("/password")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void changePassword(@Valid @RequestBody UserDto request) {
+  public void changePassword(@Valid @RequestBody ChangePasswordDto request) {
     this.changeUserPasswordUseCase.changeUserPassword(
         UserWebMapper.toChangePasswordCommand(request));
   }
 
   @PatchMapping("/status")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void toggleStatus(@Valid @RequestBody UserDto request) {
+  public void toggleStatus(@Valid @RequestBody ToggleStatusDto request) {
     this.toggleUserStatusUseCase.toggleUserStatus(
         UserWebMapper.toToggleStatusCommand(request));
   }

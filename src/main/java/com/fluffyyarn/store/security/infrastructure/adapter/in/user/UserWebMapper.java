@@ -14,7 +14,7 @@ public class UserWebMapper {
     return new UserResponseDto(
         user.getId(),
         user.getUsername(),
-        user.getIsEnabled(),
+        user.isEnabled(),
         user.getRole() != null ? user.getRole().getName() : null,
         user.getCreatedAt(),
         user.getUpdatedAt()
@@ -25,7 +25,7 @@ public class UserWebMapper {
     return users.stream().map(UserWebMapper::toUserResponseDto).toList();
   }
 
-  public static CreateUserCommand toCreateCommand(UserDto request) {
+  public static CreateUserCommand toCreateCommand(CreateUserDto request) {
     return CreateUserCommand.builder()
         .username(request.getUsername())
         .password(request.getPassword())
@@ -33,31 +33,31 @@ public class UserWebMapper {
         .build();
   }
 
-  public static RegisterUserCommand toRegisterCommand(UserDto request) {
+  public static RegisterUserCommand toRegisterCommand(RegisterUserDto request) {
     return RegisterUserCommand.builder()
         .username(request.getUsername())
         .password(request.getPassword())
         .build();
   }
 
-  public static AuthenticateUserCommand toAuthenticateCommand(UserDto request) {
+  public static AuthenticateUserCommand toAuthenticateCommand(AuthenticateUserDto request) {
     return AuthenticateUserCommand.builder()
         .username(request.getUsername())
         .password(request.getPassword())
         .build();
   }
 
-  public static ChangeUserPasswordCommand toChangePasswordCommand(UserDto request) {
+  public static ChangeUserPasswordCommand toChangePasswordCommand(ChangePasswordDto request) {
     return ChangeUserPasswordCommand.builder()
         .username(request.getUsername())
         .newPassword(request.getPassword())
         .build();
   }
 
-  public static ToggleUserStatusCommand toToggleStatusCommand(UserDto request) {
+  public static ToggleUserStatusCommand toToggleStatusCommand(ToggleStatusDto request) {
     return ToggleUserStatusCommand.builder()
         .username(request.getUsername())
-        .isEnabled(request.getIsEnabled())
+        .isEnabled(request.isEnabled())
         .build();
   }
 }
