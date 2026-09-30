@@ -9,5 +9,5 @@ import lombok.Getter;
 @Builder // Lombok -
 public class ToggleUserStatusCommand {
   private String username;
-  private Boolean isEnabled;
+  private boolean isEnabled;
 }

@@ -31,8 +31,8 @@ public class UserEntity {
   @JoinColumn(name = "role_id")
   private RoleEntity role;
 
-  @Column(name = "is_enabled")
-  private Boolean isEnabled;
+  @Column(name = "is_enabled", nullable = false)
+  private boolean isEnabled;
 
   @CreationTimestamp // Para setear el timestamp.
   private LocalDateTime createdAt;
@@ -44,7 +44,7 @@ public class UserEntity {
       String username,
       String password,
       RoleEntity role,
-      Boolean isEnabled,
+      boolean isEnabled,
       LocalDateTime createdAt,
       LocalDateTime updatedAt) {
     this.username = username;
