@@ -22,6 +22,9 @@ public class RoleEntity {
   private Short id;
 
   @Enumerated(EnumType.STRING)
+  // El unique hace posible el seed idempotente: sin él, data.sql insertaría
+  // duplicados en cada arranque.
+  @Column(name = "name", unique = true, nullable = false)
   private RoleName name;
 
   private String description;
