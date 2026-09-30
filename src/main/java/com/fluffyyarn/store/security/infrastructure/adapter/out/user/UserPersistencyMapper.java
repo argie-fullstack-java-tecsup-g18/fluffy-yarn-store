@@ -8,13 +8,18 @@ import com.fluffyyarn.store.security.infrastructure.entities.UserEntity;
 public class UserPersistencyMapper {
 
   public static UserEntity toUserEntity(User user) {
-    return new UserEntity(
+    UserEntity userEntity = new UserEntity(
         user.getUsername(),
         user.getPassword(),
         toRoleEntity(user.getRole()),
-        user.getIsEnabled(),
+        user.isEnabled(),
         user.getCreatedAt(),
         user.getUpdatedAt());
+    // Sin el id, JPA no puede distinguir un UPDATE de un INSERT: el repositorio
+    // siempre intentaria INSERT y el username unico lo revoca. Por eso un
+    // PATCH /status fallaba con "Duplicate entry" en vez de actualizar.
+    userEntity.setId(user.getId());
+    return userEntity;
   }
 
   public static User toUser(UserEntity userEntity) {
@@ -22,7 +27,7 @@ public class UserPersistencyMapper {
         .id(userEntity.getId())
         .username(userEntity.getUsername())
         .password(userEntity.getPassword())
-        .isEnabled(userEntity.getIsEnabled())
+        .isEnabled(userEntity.isEnabled())
         .role(toRole(userEntity.getRole()))
         .createdAt(userEntity.getCreatedAt())
         .updatedAt(userEntity.getUpdatedAt())
