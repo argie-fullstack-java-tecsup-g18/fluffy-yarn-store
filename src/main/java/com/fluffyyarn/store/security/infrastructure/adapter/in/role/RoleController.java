@@ -2,6 +2,7 @@ package com.fluffyyarn.store.security.infrastructure.adapter.in.role;
 
 import com.fluffyyarn.store.security.application.port.in.role.CreateRoleUseCase;
 import com.fluffyyarn.store.security.application.port.in.role.GetRoleUseCase;
+import com.fluffyyarn.store.security.domain.model.role.RoleName;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -41,5 +42,10 @@ public class RoleController {
   @GetMapping("/{id}")
   public RoleDto findById(@PathVariable Short id) {
     return RoleWebMapper.toRoleDto(this.getRoleUseCase.findById(id));
+  }
+
+  @GetMapping("/name/{name}")
+  public RoleDto findByName(@PathVariable RoleName name) {
+    return RoleWebMapper.toRoleDto(this.getRoleUseCase.findByName(name));
   }
 }
