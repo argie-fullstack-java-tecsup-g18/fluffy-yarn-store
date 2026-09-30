@@ -46,8 +46,8 @@ public class RoleService implements CreateRoleUseCase, GetRoleUseCase {
   public Role findByName(RoleName roleName) {
     Optional<Role> optionalRole = this.repository.findByName(roleName);
     if (optionalRole.isEmpty())
-      throw new RoleNotFoundException("Role with" + roleName + "not found.");
-    return null;
+      throw new RoleNotFoundException("Role with name " + roleName + " not found.");
+    return optionalRole.get();
   }
 
   @Override
