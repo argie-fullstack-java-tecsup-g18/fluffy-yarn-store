@@ -1,6 +1,7 @@
 package com.fluffyyarn.store.security.infrastructure.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +21,10 @@ public class UserEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
+  @NotBlank(message = "El username es obligatorio")
+  @Column(name = "username", unique = true, nullable = false)
   private String username;
+
   private String password;
 
   @ManyToOne // Le dice a JPA que es una relación con FK
