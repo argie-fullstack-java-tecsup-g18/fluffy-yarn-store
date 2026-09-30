@@ -17,9 +17,9 @@ import java.util.List;
 @Service
 public class UserService implements RegisterUserUseCase, CreateUserUseCase, AuthenticateUserUseCase, ChangeUserPasswordUseCase, ToggleUserStatusUseCase, GetUserUseCase {
 
-  UserRepositoryPort repository;
-  PasswordEncoder passwordEncoder;
-  RoleRepositoryPort roleRepository;
+private final UserRepositoryPort repository;
+private final PasswordEncoder passwordEncoder;
+private final RoleRepositoryPort roleRepository;
 
   public UserService(
       UserRepositoryPort repository,

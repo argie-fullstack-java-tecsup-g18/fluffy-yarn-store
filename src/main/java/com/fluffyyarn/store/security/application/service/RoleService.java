@@ -19,7 +19,7 @@ public class RoleService implements CreateRoleUseCase, GetRoleUseCase {
 
   /* TODO: Revisar este comentario, solo responder porqué se tiene que hacer asi.
   Para implementar los casos de usos se tiene que llamar al puerto de salida y el puerto de salida me va a devolver el méto.do que quiero implementar. */
-  RoleRepositoryPort repository;
+  private final RoleRepositoryPort repository;
 
   public RoleService(RoleRepositoryPort repository) {
     this.repository = repository;
