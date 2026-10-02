@@ -25,9 +25,9 @@ public class SecurityConfig {
       JwtAuthenticationConverter jwtAuthenticationConverter
   ) throws Exception {
     http
+        .csrf(csrf -> csrf.disable())
         .sessionManagement(session ->
             session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(HttpMethod.POST, "/users").permitAll()
             .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
@@ -59,7 +59,12 @@ public class SecurityConfig {
     return new BCryptPasswordEncoder();
   }
 
-  // Crea un proveedor de autenticación que consulta a la base de datos (u otra fuente) mediante el UserDetailsService para buscar los datos del usuario por su nombre de usuario.
+  /**
+   * Crea el Bean de AuthenticationManager que procesará los logins.
+   * Usa un DaoAuthenticationProvider que:
+   * 1. Consulta al UserDetailsService para obtener los datos del usuario en BD.
+   * 2. Compara la contraseña mediante el PasswordEncoder.
+   */
   @Bean
   AuthenticationManager authenticationManager(
       UserDetailsService userDetailsService,
