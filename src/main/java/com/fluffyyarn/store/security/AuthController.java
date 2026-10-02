@@ -1,4 +1,4 @@
-package com.fluffyyarn.store.identity.infrastructure.security;
+package com.fluffyyarn.store.security;
 
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.authentication.AuthenticationManager;

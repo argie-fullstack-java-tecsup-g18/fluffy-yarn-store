@@ -1,4 +1,4 @@
-package com.fluffyyarn.store.identity.infrastructure.security;
+package com.fluffyyarn.store.security;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.proc.SecurityContext;

@@ -1,4 +1,4 @@
-package com.fluffyyarn.store.identity.infrastructure.security;
+package com.fluffyyarn.store.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
