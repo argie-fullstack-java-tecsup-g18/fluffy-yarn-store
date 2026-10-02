@@ -29,7 +29,8 @@ public class TokenService {
   public String generate(Authentication auth) {
     Instant now = Instant.now();
 
-    // payload { "iss": "pedidos-api", "exp": "14134124412", ... }
+    // payload { "iss": "fluffy-yarn-store", "exp": "14134124412", ... }
+    // ESto es lo que constituye el cuerpo y contenido del token JWT (JSON Web Token).
     JwtClaimsSet claims = JwtClaimsSet.builder()
         .issuer("fluffy-yarn-store")
         .subject(auth.getName())
@@ -38,13 +39,14 @@ public class TokenService {
         .claim("roles", roles(auth))
         .build();
 
-    // El header dice con qué algoritmo se firmó.
+    // El header dice con qué algoritmo se codificó el token.
     JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
 
     return encoder.encode(JwtEncoderParameters.from(header, claims))
         .getTokenValue();
   }
 
+  // Este mét.odo solo se usa en esta clase por eso es privado
   // Extract real role names and remove the `ROLE_` prefix
   private List<String> roles(Authentication auth) {
     return auth.getAuthorities().stream()

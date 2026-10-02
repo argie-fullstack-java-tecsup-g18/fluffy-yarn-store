@@ -53,6 +53,7 @@ public class SecurityConfig {
     return converter;
   }
 
+  // Para codificar las contrasenas y retornar un Bcript
   @Bean
   PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
