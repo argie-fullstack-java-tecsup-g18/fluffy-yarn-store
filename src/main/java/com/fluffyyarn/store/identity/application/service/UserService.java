@@ -8,14 +8,13 @@ import com.fluffyyarn.store.identity.domain.exception.UserNotFoundException;
 import com.fluffyyarn.store.identity.domain.model.role.Role;
 import com.fluffyyarn.store.identity.domain.model.role.RoleName;
 import com.fluffyyarn.store.identity.domain.model.user.User;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class UserService implements RegisterUserUseCase, CreateUserUseCase, AuthenticateUserUseCase, ChangeUserPasswordUseCase, ToggleUserStatusUseCase, GetUserUseCase {
+public class UserService implements RegisterUserUseCase, CreateUserUseCase, ChangeUserPasswordUseCase, ToggleUserStatusUseCase, GetUserUseCase {
 
 private final UserRepositoryPort repository;
 private final PasswordEncoder passwordEncoder;
@@ -60,17 +59,6 @@ private final RoleRepositoryPort roleRepository;
         .role(role)
         .build();
     return this.repository.save(user);
-  }
-
-  @Override
-  public User authenticateUser(AuthenticateUserCommand cmd) {
-    User user = this.repository.findByUsername(cmd.getUsername())
-        .orElseThrow(() -> new UserNotFoundException(
-            "User with username " + cmd.getUsername() + " not found."));
-    if (!this.passwordEncoder.matches(cmd.getPassword(), user.getPassword())) {
-      throw new BadCredentialsException("Invalid password.");
-    }
-    return user;
   }
 
   @Override

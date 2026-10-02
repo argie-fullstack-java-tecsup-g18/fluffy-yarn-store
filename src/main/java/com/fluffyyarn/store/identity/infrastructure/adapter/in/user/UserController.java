@@ -16,15 +16,13 @@ public class UserController {
 
   private final RegisterUserUseCase registerUserUseCase;
   private final CreateUserUseCase createUserUseCase;
-  private final AuthenticateUserUseCase authenticateUserUseCase;
   private final ChangeUserPasswordUseCase changeUserPasswordUseCase;
   private final ToggleUserStatusUseCase toggleUserStatusUseCase;
   private final GetUserUseCase getUserUseCase;
 
-  public UserController(RegisterUserUseCase registerUserUseCase, CreateUserUseCase createUserUseCase, AuthenticateUserUseCase authenticateUserUseCase, ChangeUserPasswordUseCase changeUserPasswordUseCase, ToggleUserStatusUseCase toggleUserStatusUseCase, GetUserUseCase getUserUseCase) {
+  public UserController(RegisterUserUseCase registerUserUseCase, CreateUserUseCase createUserUseCase, ChangeUserPasswordUseCase changeUserPasswordUseCase, ToggleUserStatusUseCase toggleUserStatusUseCase, GetUserUseCase getUserUseCase) {
     this.registerUserUseCase = registerUserUseCase;
     this.createUserUseCase = createUserUseCase;
-    this.authenticateUserUseCase = authenticateUserUseCase;
     this.changeUserPasswordUseCase = changeUserPasswordUseCase;
     this.toggleUserStatusUseCase = toggleUserStatusUseCase;
     this.getUserUseCase = getUserUseCase;
@@ -42,12 +40,6 @@ public class UserController {
   public UserResponseDto create(@Valid @RequestBody CreateUserDto request) {
     return UserWebMapper.toUserResponseDto(this.createUserUseCase.createUser(
         UserWebMapper.toCreateCommand(request)));
-  }
-
-  @PostMapping("/authenticate")
-  public UserResponseDto authenticate(@Valid @RequestBody AuthenticateUserDto request) {
-    return UserWebMapper.toUserResponseDto(this.authenticateUserUseCase.authenticateUser(
-        UserWebMapper.toAuthenticateCommand(request)));
   }
 
   @PatchMapping("/password")

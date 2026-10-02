@@ -40,13 +40,6 @@ public class UserWebMapper {
         .build();
   }
 
-  public static AuthenticateUserCommand toAuthenticateCommand(AuthenticateUserDto request) {
-    return AuthenticateUserCommand.builder()
-        .username(request.getUsername())
-        .password(request.getPassword())
-        .build();
-  }
-
   public static ChangeUserPasswordCommand toChangePasswordCommand(ChangePasswordDto request) {
     return ChangeUserPasswordCommand.builder()
         .username(request.getUsername())

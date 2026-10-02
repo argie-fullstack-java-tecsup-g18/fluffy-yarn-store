@@ -8,13 +8,11 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -32,7 +30,6 @@ public class SecurityConfig {
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(HttpMethod.POST, "/users").permitAll()
-            .requestMatchers(HttpMethod.POST, "/users/authenticate").permitAll()
             .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
             .requestMatchers(HttpMethod.POST, "/roles").hasRole("ADMIN")
             .requestMatchers(HttpMethod.POST, "/users/create").hasRole("ADMIN")
@@ -59,14 +56,6 @@ public class SecurityConfig {
   @Bean
   PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
-  }
-
-  @Bean
-  UserDetailsService userDetailsService(PasswordEncoder encoder) {
-    return new InMemoryUserDetailsManager(
-        User.builder().username("user")
-            .password(encoder.encode("1234"))
-            .roles("ADMIN").build());
   }
 
   // Crea un proveedor de autenticación que consulta a la base de datos (u otra fuente) mediante el UserDetailsService para buscar los datos del usuario por su nombre de usuario.
