@@ -53,4 +53,12 @@ public class UserWebMapper {
         .isEnabled(request.isEnabled())
         .build();
   }
+
+  public static UpdateUserCommand toUpdateCommand(Integer id, UpdateUserDto request) {
+    return UpdateUserCommand.builder()
+        .id(id)
+        .username(request.getUsername())
+        .roleName(request.getRoleName())
+        .build();
+  }
 }

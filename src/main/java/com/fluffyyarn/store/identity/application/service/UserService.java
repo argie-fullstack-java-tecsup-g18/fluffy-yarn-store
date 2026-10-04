@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class UserService implements RegisterUserUseCase, CreateUserUseCase, ChangeUserPasswordUseCase, ToggleUserStatusUseCase, GetUserUseCase {
+public class UserService implements RegisterUserUseCase, CreateUserUseCase, ChangeUserPasswordUseCase, ToggleUserStatusUseCase, GetUserUseCase, UpdateUserUseCase {
 
 private final UserRepositoryPort repository;
 private final PasswordEncoder passwordEncoder;
@@ -67,6 +67,26 @@ private final RoleRepositoryPort roleRepository;
   private void assertUsernameAvailable(String username) {
     if (this.repository.findByUsername(username).isPresent())
       throw new DuplicateResourceException("Username " + username + " is already taken.");
+  }
+
+  @Override
+  public User update(UpdateUserCommand cmd) {
+    User user = this.repository.findById(cmd.getId())
+        .orElseThrow(() -> new UserNotFoundException(
+            "User with id " + cmd.getId() + " not found."));
+
+    if (cmd.getUsername() != null && !cmd.getUsername().equals(user.getUsername())) {
+      this.assertUsernameAvailable(cmd.getUsername());
+      user.setUsername(cmd.getUsername());
+    }
+
+    if (cmd.getRoleName() != null) {
+      user.setRole(this.roleRepository.findByName(cmd.getRoleName())
+          .orElseThrow(() -> new RoleNotFoundException(
+              "Role with name " + cmd.getRoleName() + " not found.")));
+    }
+
+    return this.repository.save(user);
   }
 
   @Override

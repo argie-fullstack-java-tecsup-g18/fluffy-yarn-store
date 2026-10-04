@@ -19,13 +19,15 @@ public class UserController {
   private final ChangeUserPasswordUseCase changeUserPasswordUseCase;
   private final ToggleUserStatusUseCase toggleUserStatusUseCase;
   private final GetUserUseCase getUserUseCase;
+  private final UpdateUserUseCase updateUserUseCase;
 
-  public UserController(RegisterUserUseCase registerUserUseCase, CreateUserUseCase createUserUseCase, ChangeUserPasswordUseCase changeUserPasswordUseCase, ToggleUserStatusUseCase toggleUserStatusUseCase, GetUserUseCase getUserUseCase) {
+  public UserController(RegisterUserUseCase registerUserUseCase, CreateUserUseCase createUserUseCase, ChangeUserPasswordUseCase changeUserPasswordUseCase, ToggleUserStatusUseCase toggleUserStatusUseCase, GetUserUseCase getUserUseCase, UpdateUserUseCase updateUserUseCase) {
     this.registerUserUseCase = registerUserUseCase;
     this.createUserUseCase = createUserUseCase;
     this.changeUserPasswordUseCase = changeUserPasswordUseCase;
     this.toggleUserStatusUseCase = toggleUserStatusUseCase;
     this.getUserUseCase = getUserUseCase;
+    this.updateUserUseCase = updateUserUseCase;
   }
 
   @PostMapping
@@ -54,6 +56,12 @@ public class UserController {
   public void toggleStatus(@Valid @RequestBody ToggleStatusDto request) {
     this.toggleUserStatusUseCase.toggleUserStatus(
         UserWebMapper.toToggleStatusCommand(request));
+  }
+
+  @PatchMapping("/{id}")
+  public UserResponseDto update(@PathVariable Integer id, @Valid @RequestBody UpdateUserDto request) {
+    return UserWebMapper.toUserResponseDto(this.updateUserUseCase.update(
+        UserWebMapper.toUpdateCommand(id, request)));
   }
 
   @GetMapping
