@@ -74,15 +74,23 @@ fuente, la aplicación nunca puede fallar al conectar por contraseñas distintas
 
 ```bash
 ./mvnw test                     # Correr los tests
-./mvnw spring-boot:run          # Arrancar en local
+./mvnw spring-boot:run                    # Arrancar en local
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev   # Con show-sql activo
 ./mvnw clean package            # Empaquetar el JAR en target/
 
-docker compose up -d mysql      # Solo la base de datos
-docker compose up --build       # Todo el stack
-docker compose logs -f app      # Ver logs de la app
-docker compose down             # Detener (conserva el volumen de datos)
-docker compose down -v          # Detener y BORRAR la base de datos
+podman compose up -d mysql      # Solo la base de datos
+podman compose up --build       # Todo el stack
+podman compose logs -f app      # Ver logs de la app
+podman compose down             # Detener (conserva el volumen de datos)
+podman compose down -v          # Detener y BORRAR la base de datos
 ```
+
+En esta máquina los contenedores corren con **podman**, no con docker. Si tenés docker
+instalado, `docker compose` funciona igual sobre el mismo `docker-compose.yml`.
+
+> `down -v` borra el volumen y con él todas las migraciones aplicadas. Al arrancar de
+> nuevo, Flyway vuelve a correr `V1`, `V2` y `V3` desde cero y `InitialAdminSeeder`
+> recrea el admin: es la forma limpia de reconstruir la base.
 
 ## Estructura del proyecto
 
@@ -92,6 +100,8 @@ store/
 │   └── StoreApplication.java      # Punto de entrada
 ├── src/main/resources/
 │   ├── application.properties     # Configuración
+│   ├── application-dev.properties # Perfil dev (show-sql)
+│   ├── db/migration/              # Flyway: V1 esquema, V2 roles, V3 cliente1
 │   ├── static/                    # Recursos estáticos
 │   └── templates/                 # Vistas HTML
 ├── src/test/java/                 # Tests
@@ -100,6 +110,28 @@ store/
 ├── .env.example                   # Plantilla de credenciales (sube a git)
 └── .env                           # Tus credenciales (NO sube a git)
 ```
+
+## Control de acceso
+
+Definido en `security/SecurityConfig.java`. Todo lo que no figura cae en
+`anyRequest().authenticated()`, es decir, necesita token válido pero no un rol en
+particular.
+
+| Método | Ruta | Quién |
+|---|---|---|
+| POST | `/users` (registro) | público |
+| POST | `/auth/login` | público |
+| GET | `/users`, `/roles` y sus variantes | autenticado |
+| POST | `/roles` | **ADMIN** |
+| POST | `/users/create` | **ADMIN** |
+| PATCH | `/users/password` | **ADMIN** |
+| PATCH | `/users/status` | **ADMIN** |
+
+> `PATCH /users/password` y `PATCH /users/status` son acciones de administración: sin
+> esas dos reglas, cualquier cliente autenticado podía mandar el username de otro
+> usuario junto con una password nueva y apoderarse de su cuenta. El cambio de
+> password propio del cliente está pendiente de diseñar cuando exista el módulo
+> `CUSTOMER`.
 
 ## Pendientes / Debt técnico
 
@@ -112,8 +144,10 @@ Cosas detectadas durante la preparación del repositorio, pendientes a propósit
 - [ ] **Falta `spring-boot-starter-thymeleaf` en el `pom.xml`.** Las carpetas
       `templates/` y `static/` existen, pero sin Thymeleaf las vistas HTML no se van
       a renderizar. Hay que agregar la dependencia o eliminar esas carpetas.
-- [ ] **`spring.jpa.show-sql=true` está activo.** Ruidoso para producción. Cuando se
-      implemente la separación de perfiles, moverlo a un perfil `dev`.
+- [x] **`spring.jpa.show-sql=true` estaba activo.** Resuelto: ahora vive en
+      `application-dev.properties` y el `application.properties` base lo tiene en
+      `false`. Se activa con `--spring.profiles.active=dev`. Motivo: cada INSERT de
+      usuario imprimía el hash BCrypt completo en el log.
 - [ ] `HELP.md` se ignora en `.gitignore`; su información ya está en este README.
 
 ### Deuda técnica acumulada
@@ -123,12 +157,16 @@ Detectados al implementar el módulo `security` (pasos 4-11 de la guía de Notio
 - [x] **La tabla se llama `roles`, no `role`.** El `@Table(name = "roles")` de
       `RoleEntity` no coincide con el `Table role` del DBML original. Definir
       cuál es el nombre oficial. Resuelto: `roles`.
-- [ ] **Endpoints de `Role` sin autenticación.** `POST /roles` es un endpoint de
-      administración expuesto. Al agregar Spring Security debe quedar restringido
-      a `ADMIN`.
-- [ ] **La tabla `roles` necesita seed.** `ddl-auto=update` crea la tabla vacía,
-      pero los 4 roles (`ADMIN`, `CUSTOMER`, `SELLER`, `WAREHOUSE`) deben existir
-      como datos. Con Flyway será una migración.
+- [x] **Endpoints de `Role` sin autenticación.** Resuelto: `POST /roles` quedó
+      restringido a `ADMIN` en `SecurityConfig`, igual que el alta de usuarios y la
+      mutación de password/estado.
+- [x] **La tabla `roles` necesita seed.** Resuelto con Flyway en `db/migration/`:
+      `V1` crea `roles` y `users` con DDL portable, `V2` siembra los 4 roles
+      (`ADMIN`, `CUSTOMER`, `SELLER`, `WAREHOUSE`) y `V3` siembra el usuario demo
+      `cliente1` (`cliente123`, rol CUSTOMER), que es el que recibe `403` en los
+      endpoints reservados a `ADMIN`. El admin no va en una migración: lo crea
+      `InitialAdminSeeder` a partir de `ADMIN_PASSWORD`, porque Flyway no sabe
+      hashear y dejar el hash en el repo sería meter la credencial en git.
 - [ ] **Falta `UpdateRoleUseCase`.** Pendiente según la guía de Notion del profe
       (paso 5.1): modifica la descripción o el nombre de un rol existente.
 - [ ] **Falta `UpdateUserUseCase`.** Análogo al `UpdateRoleUseCase`: actualiza el

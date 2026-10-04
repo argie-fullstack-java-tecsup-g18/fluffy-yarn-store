@@ -2,6 +2,7 @@ package com.fluffyyarn.store.identity.infrastructure.adapter.in.role;
 
 import com.fluffyyarn.store.identity.application.port.in.role.CreateRoleUseCase;
 import com.fluffyyarn.store.identity.application.port.in.role.GetRoleUseCase;
+import com.fluffyyarn.store.identity.application.port.in.role.UpdateRoleUseCase;
 import com.fluffyyarn.store.identity.domain.model.role.RoleName;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -17,14 +18,17 @@ public class RoleController {
 
   private final CreateRoleUseCase createRoleUseCase;
   private final GetRoleUseCase getRoleUseCase;
+  private final UpdateRoleUseCase updateRoleUseCase;
 
   // El controller necesita un puerto de entrada (useCases/interfaces)
   public RoleController(
       CreateRoleUseCase createRoleUseCase,
-      GetRoleUseCase getRoleUseCase
+      GetRoleUseCase getRoleUseCase,
+      UpdateRoleUseCase updateRoleUseCase
   ) {
     this.createRoleUseCase = createRoleUseCase;
     this.getRoleUseCase = getRoleUseCase;
+    this.updateRoleUseCase = updateRoleUseCase;
   }
 
   @PostMapping
@@ -32,6 +36,12 @@ public class RoleController {
   public RoleDto create(@Valid @RequestBody RoleDto request) {
     return RoleWebMapper.toRoleDto(this.createRoleUseCase.create(
         RoleWebMapper.toCommand(request)));
+  }
+
+  @PatchMapping("/{id}")
+  public RoleDto update(@PathVariable Short id, @Valid @RequestBody UpdateRoleDto request) {
+    return RoleWebMapper.toRoleDto(this.updateRoleUseCase.update(
+        RoleWebMapper.toUpdateCommand(id, request)));
   }
 
   @GetMapping

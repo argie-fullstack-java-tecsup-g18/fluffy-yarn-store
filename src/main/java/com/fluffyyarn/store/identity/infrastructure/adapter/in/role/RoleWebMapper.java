@@ -1,6 +1,7 @@
 package com.fluffyyarn.store.identity.infrastructure.adapter.in.role;
 
 import com.fluffyyarn.store.identity.application.port.in.role.CreateRoleCommand;
+import com.fluffyyarn.store.identity.application.port.in.role.UpdateRoleCommand;
 import com.fluffyyarn.store.identity.domain.model.role.Role;
 
 import java.util.List;
@@ -26,5 +27,12 @@ public class RoleWebMapper {
   public static CreateRoleCommand toCommand(RoleDto request) {
     return new CreateRoleCommand(request.getName(), request.getDescription());
 
+  }
+
+  public static UpdateRoleCommand toUpdateCommand(Short id, UpdateRoleDto request) {
+    return UpdateRoleCommand.builder()
+        .id(id)
+        .description(request.getDescription())
+        .build();
   }
 }

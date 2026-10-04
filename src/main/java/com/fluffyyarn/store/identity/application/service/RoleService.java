@@ -3,6 +3,8 @@ package com.fluffyyarn.store.identity.application.service;
 import com.fluffyyarn.store.identity.application.port.in.role.CreateRoleCommand;
 import com.fluffyyarn.store.identity.application.port.in.role.CreateRoleUseCase;
 import com.fluffyyarn.store.identity.application.port.in.role.GetRoleUseCase;
+import com.fluffyyarn.store.identity.application.port.in.role.UpdateRoleCommand;
+import com.fluffyyarn.store.identity.application.port.in.role.UpdateRoleUseCase;
 import com.fluffyyarn.store.identity.application.port.out.role.RoleRepositoryPort;
 import com.fluffyyarn.store.identity.domain.exception.DuplicateResourceException;
 import com.fluffyyarn.store.identity.domain.exception.RoleNotFoundException;
@@ -16,7 +18,7 @@ import java.util.Optional;
 // El servicio hace las implementaciones de los casos de uso
 // El servicio es el que orquesta.
 @Service
-public class RoleService implements CreateRoleUseCase, GetRoleUseCase {
+public class RoleService implements CreateRoleUseCase, GetRoleUseCase, UpdateRoleUseCase {
 
   /* TODO: Revisar este comentario, solo responder porqué se tiene que hacer asi.
   Para implementar los casos de usos se tiene que llamar al puerto de salida y el puerto de salida me va a devolver el méto.do que quiero implementar. */
@@ -35,6 +37,17 @@ public class RoleService implements CreateRoleUseCase, GetRoleUseCase {
     Role role = new Role();
     role.setName(cmd.getName());
     role.setDescription(cmd.getDescription());
+    return this.repository.save(role);
+  }
+
+  @Override
+  public Role update(UpdateRoleCommand cmd) {
+    Role role = this.findById(cmd.getId());
+
+    // PATCH: lo que viene en null no se toca. Un body vacio deja el rol igual.
+    if (cmd.getDescription() != null)
+      role.setDescription(cmd.getDescription());
+
     return this.repository.save(role);
   }
 
