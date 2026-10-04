@@ -50,6 +50,24 @@
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-mysql</artifactId>
+        </dependency>
+        <!-- En Spring Boot 4 las autoconfiguraciones se reparten en modulos por
+             tecnologia: flyway-core da las clases de Flyway, pero quien ejecuta las
+             migraciones al arrancar es FlywayAutoConfiguration, que esta en este
+             modulo. Sin el, los archivos de db/migration se ignoran en silencio y
+             Hibernate falla en validate con "missing table". -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-flyway</artifactId>
+        </dependency>
+
         <!-- Dependencia Estándar de Spring Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
