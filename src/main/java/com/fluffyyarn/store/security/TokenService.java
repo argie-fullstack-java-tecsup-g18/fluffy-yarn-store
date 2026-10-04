@@ -2,6 +2,7 @@ package com.fluffyyarn.store.security;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.FactorGrantedAuthority;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -50,6 +51,11 @@ public class TokenService {
   // Extract real role names and remove the `ROLE_` prefix
   private List<String> roles(Authentication auth) {
     return auth.getAuthorities().stream()
+        // Spring Security 7 agrega solo un FactorGrantedAuthority("FACTOR_PASSWORD")
+        // a todo login con contraseña: dice con qué factor se autenticó, no es un
+        // rol. Si se mapea igual, termina en el claim "roles" y del otro lado el
+        // JwtGrantedAuthoritiesConverter lo vuelve ROLE_FACTOR_PASSWORD.
+        .filter(authority -> !(authority instanceof FactorGrantedAuthority))
         .map(GrantedAuthority::getAuthority)
         .map(role -> role.replace("ROLE_", ""))
         .toList();
