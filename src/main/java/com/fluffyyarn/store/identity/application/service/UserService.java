@@ -3,6 +3,7 @@ package com.fluffyyarn.store.identity.application.service;
 import com.fluffyyarn.store.identity.application.port.in.user.*;
 import com.fluffyyarn.store.identity.application.port.out.role.RoleRepositoryPort;
 import com.fluffyyarn.store.identity.application.port.out.user.UserRepositoryPort;
+import com.fluffyyarn.store.identity.domain.exception.DuplicateResourceException;
 import com.fluffyyarn.store.identity.domain.exception.RoleNotFoundException;
 import com.fluffyyarn.store.identity.domain.exception.UserNotFoundException;
 import com.fluffyyarn.store.identity.domain.model.role.Role;
@@ -32,6 +33,7 @@ private final RoleRepositoryPort roleRepository;
   // Para admins
   @Override
   public User createUser(CreateUserCommand cmd) {
+    this.assertUsernameAvailable(cmd.getUsername());
     Role role = this.roleRepository.findByName(cmd.getRoleName())
         .orElseThrow(() -> new RoleNotFoundException(
             "Role with name " + cmd.getRoleName() + " not found."));
@@ -47,6 +49,7 @@ private final RoleRepositoryPort roleRepository;
   // Para customers
   @Override
   public User registerUser(RegisterUserCommand cmd) {
+    this.assertUsernameAvailable(cmd.getUsername());
     // El rol lo decide el sistema, no el cliente: un registro público no puede
     // auto-asignarse ADMIN. Por eso el endpoint de registro no recibe roleName.
     Role role = this.roleRepository.findByName(RoleName.CUSTOMER)
@@ -59,6 +62,11 @@ private final RoleRepositoryPort roleRepository;
         .role(role)
         .build();
     return this.repository.save(user);
+  }
+
+  private void assertUsernameAvailable(String username) {
+    if (this.repository.findByUsername(username).isPresent())
+      throw new DuplicateResourceException("Username " + username + " is already taken.");
   }
 
   @Override

@@ -4,6 +4,7 @@ import com.fluffyyarn.store.identity.application.port.in.role.CreateRoleCommand;
 import com.fluffyyarn.store.identity.application.port.in.role.CreateRoleUseCase;
 import com.fluffyyarn.store.identity.application.port.in.role.GetRoleUseCase;
 import com.fluffyyarn.store.identity.application.port.out.role.RoleRepositoryPort;
+import com.fluffyyarn.store.identity.domain.exception.DuplicateResourceException;
 import com.fluffyyarn.store.identity.domain.exception.RoleNotFoundException;
 import com.fluffyyarn.store.identity.domain.model.role.Role;
 import com.fluffyyarn.store.identity.domain.model.role.RoleName;
@@ -27,6 +28,10 @@ public class RoleService implements CreateRoleUseCase, GetRoleUseCase {
 
   @Override
   public Role create(CreateRoleCommand cmd) {
+    if (this.repository.findByName(cmd.getName()).isPresent())
+      throw new DuplicateResourceException(
+          "Role with name " + cmd.getName() + " already exists.");
+
     Role role = new Role();
     role.setName(cmd.getName());
     role.setDescription(cmd.getDescription());

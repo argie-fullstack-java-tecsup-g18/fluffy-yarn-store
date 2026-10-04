@@ -33,6 +33,8 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
             .requestMatchers(HttpMethod.POST, "/roles").hasRole("ADMIN")
             .requestMatchers(HttpMethod.POST, "/users/create").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.PATCH, "/users/password").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.PATCH, "/users/status").hasRole("ADMIN")
             .anyRequest().authenticated())
         .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt ->
             jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)));
