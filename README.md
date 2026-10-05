@@ -126,12 +126,18 @@ particular.
 | POST | `/users/create` | **ADMIN** |
 | PATCH | `/users/password` | **ADMIN** |
 | PATCH | `/users/status` | **ADMIN** |
+| PATCH | `/roles/{id}` | **ADMIN** |
+| PATCH | `/users/{id}` | **ADMIN** |
 
 > `PATCH /users/password` y `PATCH /users/status` son acciones de administración: sin
 > esas dos reglas, cualquier cliente autenticado podía mandar el username de otro
 > usuario junto con una password nueva y apoderarse de su cuenta. El cambio de
 > password propio del cliente está pendiente de diseñar cuando exista el módulo
 > `CUSTOMER`.
+>
+> `PATCH /roles/{id}` y `PATCH /users/{id}` actualizan la descripción de un rol y el
+> `username`/`role` de un usuario. Van sobre la path (`/users/1`) y no sobre el body,
+> porque el id identifica al recurso que se modifica.
 
 ## Pendientes / Debt técnico
 
@@ -167,7 +173,10 @@ Detectados al implementar el módulo `security` (pasos 4-11 de la guía de Notio
       endpoints reservados a `ADMIN`. El admin no va en una migración: lo crea
       `InitialAdminSeeder` a partir de `ADMIN_PASSWORD`, porque Flyway no sabe
       hashear y dejar el hash en el repo sería meter la credencial en git.
-- [ ] **Falta `UpdateRoleUseCase`.** Pendiente según la guía de Notion del profe
-      (paso 5.1): modifica la descripción o el nombre de un rol existente.
-- [ ] **Falta `UpdateUserUseCase`.** Análogo al `UpdateRoleUseCase`: actualiza el
-      `username` o el `role` de un usuario existente.
+- [x] **`UpdateRoleUseCase`.** Resuelto: `PATCH /roles/{id}` solo acepta `description`
+      (`name` es el enum de los 4 roles y no tiene sentido editarlo). Reservado a
+      `ADMIN`.
+- [x] **`UpdateUserUseCase`.** Resuelto: `PATCH /users/{id}` actualiza `username` y
+      `roleName`, ambos opcionales. Reservado a `ADMIN`. Ojo: el token vigente del
+      usuario renombrado sigue vivo hasta los 60 min, porque el JWT lleva el nombre
+      embebido y nadie lo vuelve a leer.
