@@ -100,8 +100,8 @@ private final RoleRepositoryPort roleRepository;
 
   @Override
   public void toggleUserStatus(ToggleUserStatusCommand cmd) {
-    User user = this.repository.findByUsername(cmd.getUsername())
-        .orElseThrow(() -> new UserNotFoundException("User with username " + cmd.getUsername() + " not found."));
+    User user = this.repository.findById(cmd.getId())
+        .orElseThrow(() -> new UserNotFoundException("User with id " + cmd.getId() + " not found."));
     user.setEnabled(cmd.isEnabled());
     this.repository.save(user);
   }

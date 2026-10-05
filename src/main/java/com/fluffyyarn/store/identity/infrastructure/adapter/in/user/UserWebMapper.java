@@ -47,9 +47,9 @@ public class UserWebMapper {
         .build();
   }
 
-  public static ToggleUserStatusCommand toToggleStatusCommand(ToggleStatusDto request) {
+  public static ToggleUserStatusCommand toToggleStatusCommand(Integer id, ToggleStatusDto request) {
     return ToggleUserStatusCommand.builder()
-        .username(request.getUsername())
+        .id(id)
         .isEnabled(request.isEnabled())
         .build();
   }

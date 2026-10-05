@@ -39,7 +39,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, "/roles").hasRole("ADMIN")
             .requestMatchers(HttpMethod.POST, "/users/create").hasRole("ADMIN")
             .requestMatchers(HttpMethod.PATCH, "/users/password").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.PATCH, "/users/status").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.PATCH, "/users/{id}/status").hasRole("ADMIN")
             .requestMatchers(HttpMethod.PATCH, "/roles/{id}").hasRole("ADMIN")
             .requestMatchers(HttpMethod.PATCH, "/users/{id}").hasRole("ADMIN")
             .requestMatchers(HttpMethod.GET, "/users/**").hasRole("ADMIN")
@@ -81,6 +81,7 @@ public class SecurityConfig {
       UserDetailsService userDetailsService,
       PasswordEncoder passwordEncoder
   ) {
+    // Clase para el acceso a objetos - Java - Spring
     DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
     provider.setPasswordEncoder(passwordEncoder);
     return new ProviderManager(provider);

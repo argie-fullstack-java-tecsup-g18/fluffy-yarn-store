@@ -8,6 +8,6 @@ import lombok.Getter;
 @AllArgsConstructor // Lombok - Genera el constructor con todos los atributos.
 @Builder // Lombok -
 public class ToggleUserStatusCommand {
-  private String username;
+  private Integer id;
   private boolean isEnabled;
 }

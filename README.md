@@ -126,11 +126,11 @@ particular.
 | POST | `/roles` | **ADMIN** |
 | POST | `/users/create` | **ADMIN** |
 | PATCH | `/users/password` | **ADMIN** |
-| PATCH | `/users/status` | **ADMIN** |
+| PATCH | `/users/{id}/status` | **ADMIN** |
 | PATCH | `/roles/{id}` | **ADMIN** |
 | PATCH | `/users/{id}` | **ADMIN** |
 
-> `PATCH /users/password` y `PATCH /users/status` son acciones de administración: sin
+> `PATCH /users/password` y `PATCH /users/{id}/status` son acciones de administración: sin
 > esas dos reglas, cualquier cliente autenticado podía mandar el username de otro
 > usuario junto con una password nueva y apoderarse de su cuenta. El cambio de
 > password propio del cliente está pendiente de diseñar cuando exista el módulo

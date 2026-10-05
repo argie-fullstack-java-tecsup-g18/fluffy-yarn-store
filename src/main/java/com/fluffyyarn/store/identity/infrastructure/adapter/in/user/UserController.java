@@ -54,12 +54,12 @@ public class UserController {
         UserWebMapper.toChangePasswordCommand(request));
   }
 
-  @PatchMapping("/status")
+  @PatchMapping("/{id}/status")
   @PreAuthorize("hasRole('ADMIN')")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void toggleStatus(@Valid @RequestBody ToggleStatusDto request) {
+  public void toggleStatus(@PathVariable Integer id, @Valid @RequestBody ToggleStatusDto request) {
     this.toggleUserStatusUseCase.toggleUserStatus(
-        UserWebMapper.toToggleStatusCommand(request));
+        UserWebMapper.toToggleStatusCommand(id, request));
   }
 
   @PatchMapping("/{id}")
