@@ -6,6 +6,7 @@ import com.fluffyyarn.store.identity.application.port.in.role.UpdateRoleUseCase;
 import com.fluffyyarn.store.identity.domain.model.role.RoleName;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class RoleController {
   }
 
   @PostMapping
+  @PreAuthorize("hasRole('ADMIN')")
   @ResponseStatus(HttpStatus.CREATED)
   public RoleDto create(@Valid @RequestBody RoleDto request) {
     return RoleWebMapper.toRoleDto(this.createRoleUseCase.create(
@@ -39,22 +41,26 @@ public class RoleController {
   }
 
   @PatchMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public RoleDto update(@PathVariable Short id, @Valid @RequestBody UpdateRoleDto request) {
     return RoleWebMapper.toRoleDto(this.updateRoleUseCase.update(
         RoleWebMapper.toUpdateCommand(id, request)));
   }
 
   @GetMapping
+  @PreAuthorize("hasRole('ADMIN')")
   public List<RoleDto> findAll() {
     return RoleWebMapper.toRoleDtoList(this.getRoleUseCase.findAll());
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public RoleDto findById(@PathVariable Short id) {
     return RoleWebMapper.toRoleDto(this.getRoleUseCase.findById(id));
   }
 
   @GetMapping("/name/{name}")
+  @PreAuthorize("hasRole('ADMIN')")
   public RoleDto findByName(@PathVariable RoleName name) {
     return RoleWebMapper.toRoleDto(this.getRoleUseCase.findByName(name));
   }

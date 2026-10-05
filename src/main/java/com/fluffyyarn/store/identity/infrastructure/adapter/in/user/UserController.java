@@ -4,6 +4,7 @@ import com.fluffyyarn.store.identity.application.port.in.user.*;
 import com.fluffyyarn.store.identity.domain.model.user.User;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class UserController {
   }
 
   @PostMapping("/create")
+  @PreAuthorize("hasRole('ADMIN')")
   @ResponseStatus(HttpStatus.CREATED)
   public UserResponseDto create(@Valid @RequestBody CreateUserDto request) {
     return UserWebMapper.toUserResponseDto(this.createUserUseCase.createUser(
@@ -45,6 +47,7 @@ public class UserController {
   }
 
   @PatchMapping("/password")
+  @PreAuthorize("hasRole('ADMIN')")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void changePassword(@Valid @RequestBody ChangePasswordDto request) {
     this.changeUserPasswordUseCase.changeUserPassword(
@@ -52,6 +55,7 @@ public class UserController {
   }
 
   @PatchMapping("/status")
+  @PreAuthorize("hasRole('ADMIN')")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void toggleStatus(@Valid @RequestBody ToggleStatusDto request) {
     this.toggleUserStatusUseCase.toggleUserStatus(
@@ -59,22 +63,26 @@ public class UserController {
   }
 
   @PatchMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public UserResponseDto update(@PathVariable Integer id, @Valid @RequestBody UpdateUserDto request) {
     return UserWebMapper.toUserResponseDto(this.updateUserUseCase.update(
         UserWebMapper.toUpdateCommand(id, request)));
   }
 
   @GetMapping
+  @PreAuthorize("hasRole('ADMIN')")
   public List<UserResponseDto> findAll() {
     return UserWebMapper.toUserResponseDtoList(this.getUserUseCase.findAll());
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public UserResponseDto findById(@PathVariable Integer id) {
     return UserWebMapper.toUserResponseDto(this.getUserUseCase.findById(id));
   }
 
   @GetMapping("/username/{username}")
+  @PreAuthorize("hasRole('ADMIN')")
   public UserResponseDto findByUsername(@PathVariable String username) {
     return UserWebMapper.toUserResponseDto(this.getUserUseCase.findByUsername(username));
   }
