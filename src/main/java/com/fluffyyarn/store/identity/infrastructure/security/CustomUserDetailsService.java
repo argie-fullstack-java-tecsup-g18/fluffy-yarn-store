@@ -15,11 +15,12 @@ import java.util.List;
 // escrito en el codigo, busca en la tabla users. Con esto el login funciona con
 // los usuarios reales y desaparece el password "1234" hardcodeado.
 @Service
-public class UserDetailsServiceImpl implements org.springframework.security.core.userdetails.UserDetailsService {
+public class CustomUserDetailsService
+    implements org.springframework.security.core.userdetails.UserDetailsService {
 
   private final UserRepositoryPort repository;
 
-  public UserDetailsServiceImpl(UserRepositoryPort repository) {
+  public CustomUserDetailsService(UserRepositoryPort repository) {
     this.repository = repository;
   }
 
