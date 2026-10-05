@@ -121,7 +121,8 @@ particular.
 |---|---|---|
 | POST | `/users` (registro) | público |
 | POST | `/auth/login` | público |
-| GET | `/users`, `/roles` y sus variantes | autenticado |
+| GET | `/swagger-ui/**`, `/v3/api-docs/**` | público |
+| GET | `/users`, `/roles` y sus variantes | **ADMIN** |
 | POST | `/roles` | **ADMIN** |
 | POST | `/users/create` | **ADMIN** |
 | PATCH | `/users/password` | **ADMIN** |
