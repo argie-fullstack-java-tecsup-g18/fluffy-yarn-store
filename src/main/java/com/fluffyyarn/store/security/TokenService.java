@@ -43,8 +43,12 @@ public class TokenService {
     // El header dice con qué algoritmo se codificó el token.
     JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
 
-    return encoder.encode(JwtEncoderParameters.from(header, claims))
-        .getTokenValue();
+    return encoder.encode(
+        JwtEncoderParameters.from(
+            header,
+            claims
+        )
+    ).getTokenValue();
   }
 
   // Este mét.odo solo se usa en esta clase por eso es privado
