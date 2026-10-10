@@ -34,9 +34,10 @@ public class RoleService implements CreateRoleUseCase, GetRoleUseCase, UpdateRol
       throw new DuplicateResourceException(
           "Role with name " + cmd.getName() + " already exists.");
 
-    Role role = new Role();
-    role.setName(cmd.getName());
-    role.setDescription(cmd.getDescription());
+    Role role = Role.builder()
+        .name(cmd.getName())
+        .description(cmd.getDescription())
+        .build();
     return this.repository.save(role);
   }
 
