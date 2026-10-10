@@ -3,6 +3,7 @@ package com.fluffyyarn.store.identity.infrastructure.adapter.in.user;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fluffyyarn.store.identity.domain.model.role.RoleName;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 
 // Omite el password porque el web mapper no requiere el password
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponseDto {
@@ -25,7 +27,7 @@ public class UserResponseDto {
   // isEnabled y enabled duplicados.
   //
   // Con el atributo en "enabled", Lombok vuelve a generar isEnabled(), Jackson lo
-  // deduuce como "enabled" y los tres accesores vuelven a fusionarse en una sola
+  // deduce como "enabled" y los tres accesores vuelven a fusionarse en una sola
   // propiedad. El @JsonProperty renombra ese grupo ya unido al contrato original.
   @JsonProperty("isEnabled")
   private boolean enabled;

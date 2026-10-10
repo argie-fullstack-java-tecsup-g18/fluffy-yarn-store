@@ -10,15 +10,16 @@ import java.util.List;
 public class UserWebMapper {
 
   // Oculta el hash para que no viaje al cliente
+  // Refactor, reemplazo de uso de new por patron builder para la consistencia
   public static UserResponseDto toUserResponseDto(User user) {
-    return new UserResponseDto(
-        user.getId(),
-        user.getUsername(),
-        user.isEnabled(),
-        user.getRole() != null ? user.getRole().getName() : null,
-        user.getCreatedAt(),
-        user.getUpdatedAt()
-    );
+    return UserResponseDto.builder()
+        .id(user.getId())
+        .username(user.getUsername())
+        .enabled(user.isEnabled())
+        .roleName(user.getRole() != null ? user.getRole().getName() : null)
+        .createdAt(user.getCreatedAt())
+        .updatedAt(user.getUpdatedAt())
+        .build();
   }
 
   public static List<UserResponseDto> toUserResponseDtoList(List<User> users) {
