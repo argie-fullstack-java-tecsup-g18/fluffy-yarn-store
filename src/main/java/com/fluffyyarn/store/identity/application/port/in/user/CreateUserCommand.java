@@ -5,11 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.Optional;
+
 // Para el ADMIN
 @Getter
 @AllArgsConstructor
 @Builder
-public class CreateUserCommand {
+public class CreateUserCommand implements UserCommand {
   private String username;
   private String password;
   private RoleName roleName;
