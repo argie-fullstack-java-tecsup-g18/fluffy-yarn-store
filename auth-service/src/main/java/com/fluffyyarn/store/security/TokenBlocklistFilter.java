@@ -1,6 +1,6 @@
 package com.fluffyyarn.store.security;
 
-import com.fluffyyarn.store.security.application.port.in.TokenBlacklistPort;
+import com.fluffyyarn.store.security.application.port.in.TokenBlocklistPort;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,9 +18,9 @@ import java.util.Map;
 // OncePerRequestFilter - clase especial de Spring que intercepta todas y cada una de las peticiones HTTP que llegan al servidor, ejecuta el metodo central doFilterInternal.
 public class TokenBlocklistFilter extends OncePerRequestFilter {
 
-  private final TokenBlacklistPort blocklistPort;
+  private final TokenBlocklistPort blocklistPort;
 
-  public TokenBlocklistFilter(TokenBlacklistPort blocklistPort) {
+  public TokenBlocklistFilter(TokenBlocklistPort blocklistPort) {
     this.blocklistPort = blocklistPort;
   }
 

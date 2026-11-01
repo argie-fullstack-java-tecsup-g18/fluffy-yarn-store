@@ -1,6 +1,6 @@
 package com.fluffyyarn.store.security;
 
-import com.fluffyyarn.store.security.application.port.in.TokenBlacklistPort;
+import com.fluffyyarn.store.security.application.port.in.TokenBlocklistPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -26,9 +26,9 @@ public class SecurityConfig {
   SecurityFilterChain securityFilterChain(
       HttpSecurity http,
       JwtAuthenticationConverter jwtAuthenticationConverter,
-      TokenBlacklistPort tokenBlacklistPort
+      TokenBlocklistPort tokenBlocklistPort
   ) throws Exception {
-    TokenBlocklistFilter tokenBlocklistFilter = new TokenBlocklistFilter(tokenBlacklistPort);
+    TokenBlocklistFilter tokenBlocklistFilter = new TokenBlocklistFilter(tokenBlocklistPort);
 
     http
         .csrf(csrf -> csrf.disable())

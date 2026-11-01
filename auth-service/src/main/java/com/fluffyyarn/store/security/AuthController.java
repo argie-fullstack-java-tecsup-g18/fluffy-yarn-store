@@ -1,6 +1,6 @@
 package com.fluffyyarn.store.security;
 
-import com.fluffyyarn.store.security.application.port.in.TokenBlacklistPort;
+import com.fluffyyarn.store.security.application.port.in.TokenBlocklistPort;
 import com.fluffyyarn.store.security.application.port.in.TokenGeneratorPort;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -22,16 +22,16 @@ public class AuthController {
 
   private final TokenGeneratorPort tokenGeneratorPort;
   private final AuthenticationManager authenticationManager;
-  private final TokenBlacklistPort tokenBlacklistPort;
+  private final TokenBlocklistPort tokenBlocklistPort;
 
   public AuthController(
       TokenGeneratorPort tokenGeneratorPort,
       AuthenticationManager authenticationManager,
-      TokenBlacklistPort tokenBlacklistPort
+      TokenBlocklistPort tokenBlocklistPort
   ) {
     this.tokenGeneratorPort = tokenGeneratorPort;
     this.authenticationManager = authenticationManager;
-    this.tokenBlacklistPort = tokenBlacklistPort;
+    this.tokenBlocklistPort = tokenBlocklistPort;
   }
 
   @PostMapping("/login")
@@ -59,7 +59,7 @@ public class AuthController {
     String jti = jwt.getClaimAsString("jti");
     Instant expiresAt = jwt.getExpiresAt();
     if (jti != null && expiresAt != null) {
-      tokenBlacklistPort.blocklist(jti, expiresAt);
+      tokenBlocklistPort.blocklist(jti, expiresAt);
     }
   }
 

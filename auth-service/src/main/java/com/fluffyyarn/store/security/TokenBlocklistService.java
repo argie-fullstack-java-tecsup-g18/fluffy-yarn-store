@@ -1,6 +1,6 @@
 package com.fluffyyarn.store.security;
 
-import com.fluffyyarn.store.security.application.port.in.TokenBlacklistPort;
+import com.fluffyyarn.store.security.application.port.in.TokenBlocklistPort;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import java.time.temporal.ChronoUnit;
 
 // El servicio que se comunica con redis
 @Service
-public class TokenBlocklistService implements TokenBlacklistPort {
+public class TokenBlocklistService implements TokenBlocklistPort {
 
   // En Redis, los datos se guardan como pares de "clave-valor".
   private static final String PREFIX = "blocklist:";
