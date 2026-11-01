@@ -1,5 +1,6 @@
 package com.fluffyyarn.store.security;
 
+import com.fluffyyarn.store.security.application.port.in.TokenBlacklistPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,18 +15,21 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
 
-  // Cadena de filtros de seguridad (son secuenciales o en cascada como css)
   @Bean
   SecurityFilterChain securityFilterChain(
       HttpSecurity http,
-      JwtAuthenticationConverter jwtAuthenticationConverter
+      JwtAuthenticationConverter jwtAuthenticationConverter,
+      TokenBlacklistPort tokenBlacklistPort
   ) throws Exception {
+    TokenBlocklistFilter tokenBlocklistFilter = new TokenBlocklistFilter(tokenBlacklistPort);
+
     http
         .csrf(csrf -> csrf.disable())
         .sessionManagement(session ->
@@ -44,15 +48,15 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.PATCH, "/users/{id}").hasRole("ADMIN")
             .requestMatchers(HttpMethod.GET, "/users/**").hasRole("ADMIN")
             .requestMatchers(HttpMethod.GET, "/roles/**").hasRole("ADMIN")
-            .anyRequest().authenticated())
+            .anyRequest().authenticated()
+        )
+        .addFilterAfter(tokenBlocklistFilter, BearerTokenAuthenticationFilter.class)
         .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt ->
             jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)));
 
-    // Ensambla y retorna el Bean SecurityFilterChain procesado para registrar la seguridad global en la aplicación.
     return http.build();
   }
 
-  // Le indica a Spring Security que busque la lista de roles del usuario en la propiedad/campo "roles" dentro del JSON del token JWT
   @Bean
   JwtAuthenticationConverter jwtAuthenticationConverter() {
     JwtGrantedAuthoritiesConverter authorities = new JwtGrantedAuthoritiesConverter();
@@ -64,24 +68,16 @@ public class SecurityConfig {
     return converter;
   }
 
-  // Para codificar las contrasenas y retornar un Bcript
   @Bean
   PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 
-  /**
-   * Crea el Bean de AuthenticationManager que procesará los logins.
-   * Usa un DaoAuthenticationProvider que:
-   * 1. Consulta al UserDetailsService para obtener los datos del usuario en BD.
-   * 2. Compara la contraseña mediante el PasswordEncoder.
-   */
   @Bean
   AuthenticationManager authenticationManager(
       UserDetailsService userDetailsService,
       PasswordEncoder passwordEncoder
   ) {
-    // Clase para el acceso a objetos - Java - Spring
     DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
     provider.setPasswordEncoder(passwordEncoder);
     return new ProviderManager(provider);

@@ -1,5 +1,6 @@
 package com.fluffyyarn.store.security;
 
+import com.fluffyyarn.store.security.application.port.in.TokenGeneratorPort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.FactorGrantedAuthority;
@@ -13,9 +14,11 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.UUID;
 
+// Este servicio es donde se definen los claims que van a estar dentro del JWT
 @Service
-public class TokenService {
+public class TokenService implements TokenGeneratorPort {
 
   public static final long EXPIRES_IN_MINUTES = 60;
   public static final long EXPIRES_IN_SECONDS = EXPIRES_IN_MINUTES * 60;
@@ -27,6 +30,7 @@ public class TokenService {
   }
 
   // Genera el token a partir de una autenticacion ya validada.
+  @Override
   public String generate(Authentication auth) {
     Instant now = Instant.now();
 
@@ -35,8 +39,9 @@ public class TokenService {
     JwtClaimsSet claims = JwtClaimsSet.builder()
         .issuer("fluffy-yarn-store")
         .subject(auth.getName())
-        .issuedAt(now)
+        .issuedAt(now) // Genera un identificador universal único
         .expiresAt(now.plus(EXPIRES_IN_MINUTES, ChronoUnit.MINUTES))
+        .claim("jti", UUID.randomUUID().toString())
         .claim("roles", roles(auth))
         .build();
 

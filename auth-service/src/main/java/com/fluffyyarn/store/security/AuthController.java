@@ -1,28 +1,37 @@
 package com.fluffyyarn.store.security;
 
+import com.fluffyyarn.store.security.application.port.in.TokenBlacklistPort;
+import com.fluffyyarn.store.security.application.port.in.TokenGeneratorPort;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-  private final TokenService tokenService;
+  private final TokenGeneratorPort tokenGeneratorPort;
   private final AuthenticationManager authenticationManager;
+  private final TokenBlacklistPort tokenBlacklistPort;
 
   public AuthController(
-      TokenService tokenService,
-      AuthenticationManager authenticationManager
+      TokenGeneratorPort tokenGeneratorPort,
+      AuthenticationManager authenticationManager,
+      TokenBlacklistPort tokenBlacklistPort
   ) {
-    this.tokenService = tokenService;
+    this.tokenGeneratorPort = tokenGeneratorPort;
     this.authenticationManager = authenticationManager;
+    this.tokenBlacklistPort = tokenBlacklistPort;
   }
 
   @PostMapping("/login")
@@ -38,10 +47,20 @@ public class AuthController {
         ));
 
     return new TokenResponseDto(
-        tokenService.generate(auth),
+        tokenGeneratorPort.generate(auth),
         "Bearer",
         TokenService.EXPIRES_IN_SECONDS
     );
+  }
+
+  @PostMapping("/logout")
+  // la anotación @AuthenticationPrincipal trae el objeto con toda la información del usuario que está conectado
+  public void logout(@AuthenticationPrincipal Jwt jwt) {
+    String jti = jwt.getClaimAsString("jti");
+    Instant expiresAt = jwt.getExpiresAt();
+    if (jti != null && expiresAt != null) {
+      tokenBlacklistPort.blocklist(jti, expiresAt);
+    }
   }
 
   /* Contrato de entrada payload (deserializa: JSON a código - PAYLOAD)
