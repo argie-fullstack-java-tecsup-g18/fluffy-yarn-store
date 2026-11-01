@@ -1,0 +1,122 @@
+package com.fluffyyarn.store.identity.application.service;
+
+import com.fluffyyarn.store.identity.application.port.in.user.*;
+import com.fluffyyarn.store.identity.application.port.out.role.RoleRepositoryPort;
+import com.fluffyyarn.store.identity.application.port.out.security.PasswordHasherPort;
+import com.fluffyyarn.store.identity.application.port.out.user.UserRepositoryPort;
+import com.fluffyyarn.store.identity.domain.exception.DuplicateResourceException;
+import com.fluffyyarn.store.identity.domain.exception.RoleNotFoundException;
+import com.fluffyyarn.store.identity.domain.exception.UserNotFoundException;
+import com.fluffyyarn.store.identity.domain.model.role.Role;
+import com.fluffyyarn.store.identity.domain.model.role.RoleName;
+import com.fluffyyarn.store.identity.domain.model.user.User;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class UserService implements RegisterUserUseCase, CreateUserUseCase, ChangeUserPasswordUseCase, ToggleUserStatusUseCase, GetUserUseCase, UpdateUserUseCase {
+
+  private final UserRepositoryPort repository;
+  private final PasswordHasherPort passwordHasher;
+  private final RoleRepositoryPort roleRepository;
+
+  public UserService(
+      UserRepositoryPort repository,
+      PasswordHasherPort passwordHasher,
+      RoleRepositoryPort roleRepository) {
+    this.repository = repository;
+    this.passwordHasher = passwordHasher;
+    this.roleRepository = roleRepository;
+  }
+
+  private User userFactory(UserCommand cmd, RoleName roleName) {
+    Role role = this.roleRepository.findByName(roleName)
+        .orElseThrow(() -> new RoleNotFoundException(
+            "Role with name " + roleName + " not found."));
+
+    return User.builder()
+        .username(cmd.getUsername())
+        .password(this.passwordHasher.hash(cmd.getPassword()))
+        .isEnabled(true)
+        .role(role)
+        .build();
+  }
+
+  // Para admins
+  @Override
+  public User createUser(CreateUserCommand cmd) {
+    this.assertUsernameAvailable(cmd.getUsername());
+    User user = this.userFactory(cmd, cmd.getRoleName());
+    return this.repository.save(user);
+  }
+
+  // Para customers
+  @Override
+  public User registerUser(RegisterUserCommand cmd) {
+    this.assertUsernameAvailable(cmd.getUsername());
+    // El rol lo decide el sistema, no el cliente: un registro público no puede
+    // auto-asignarse ADMIN. Por eso el endpoint de registro no recibe roleName.
+    User user = this.userFactory(cmd, RoleName.CUSTOMER);
+    return this.repository.save(user);
+  }
+
+  private void assertUsernameAvailable(String username) {
+    if (this.repository.findByUsername(username).isPresent())
+      throw new DuplicateResourceException("Username " + username + " is already taken.");
+  }
+
+  @Override
+  public User update(UpdateUserCommand cmd) {
+    User user = this.repository.findById(cmd.getId())
+        .orElseThrow(() -> new UserNotFoundException(
+            "User with id " + cmd.getId() + " not found."));
+
+    if (cmd.getUsername() != null && !cmd.getUsername().equals(user.getUsername())) {
+      this.assertUsernameAvailable(cmd.getUsername());
+      user.setUsername(cmd.getUsername());
+    }
+
+    if (cmd.getRoleName() != null) {
+      user.setRole(this.roleRepository.findByName(cmd.getRoleName())
+          .orElseThrow(() -> new RoleNotFoundException(
+              "Role with name " + cmd.getRoleName() + " not found.")));
+    }
+
+    return this.repository.save(user);
+  }
+
+  @Override
+  public void changeUserPassword(ChangeUserPasswordCommand cmd) {
+    User user = this.repository.findByUsername(cmd.getUsername())
+        .orElseThrow(() -> new UserNotFoundException(
+            "User with username " + cmd.getUsername() + " not found."));
+    user.setPassword(this.passwordHasher.hash(cmd.getNewPassword()));
+    this.repository.save(user);
+  }
+
+  @Override
+  public void toggleUserStatus(ToggleUserStatusCommand cmd) {
+    User user = this.repository.findById(cmd.getId())
+        .orElseThrow(() -> new UserNotFoundException("User with id " + cmd.getId() + " not found."));
+    user.setEnabled(cmd.isEnabled());
+    this.repository.save(user);
+  }
+
+  @Override
+  public User findById(Long id) throws UserNotFoundException {
+    return this.repository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found."));
+  }
+
+  @Override
+  public User findByUsername(String username) throws UserNotFoundException {
+    return this.repository.findByUsername(username)
+        .orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found."));
+  }
+
+  @Override
+  public List<User> findAll() {
+    return this.repository.findAll();
+  }
+}
