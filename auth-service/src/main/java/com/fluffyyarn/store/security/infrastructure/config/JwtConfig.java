@@ -18,11 +18,13 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 public class JwtConfig {
 
+  // Todo es Bean para que spring lo inyecte
   @Bean
   SecretKey jwtSecretKey(@Value("${jwt.secret}") String secret) {
     return new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
   }
 
+  // Este es el Bean qe firma el token
   @Bean
   JwtEncoder jwtEncoder(SecretKey key) {
     return new NimbusJwtEncoder(new ImmutableSecret<SecurityContext>(key));

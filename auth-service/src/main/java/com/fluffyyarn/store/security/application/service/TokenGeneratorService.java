@@ -16,6 +16,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
+// Este servicio es donde se definen los claims que van a estar dentro del JWT
 @Service
 public class TokenGeneratorService implements TokenGeneratorPort {
 
@@ -28,6 +29,7 @@ public class TokenGeneratorService implements TokenGeneratorPort {
     this.encoder = encoder;
   }
 
+  // Genera el token a partir de una autenticacion ya validada.
   @Override
   public String generate(Authentication auth) {
     Instant now = Instant.now();
@@ -37,10 +39,13 @@ public class TokenGeneratorService implements TokenGeneratorPort {
         .subject(auth.getName())
         .issuedAt(now)
         .expiresAt(now.plus(EXPIRES_IN_MINUTES, ChronoUnit.MINUTES))
+        // payload { "iss": "fluffy-yarn-store", "exp": "14134124412", ... }
+        // ESto es lo que constituye el cuerpo y contenido del token JWT (JSON Web Token).
         .claim("jti", UUID.randomUUID().toString())
         .claim("roles", roles(auth))
         .build();
 
+    // El header dice con qué algoritmo se codificó el token.
     JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
 
     return encoder.encode(
@@ -51,6 +56,8 @@ public class TokenGeneratorService implements TokenGeneratorPort {
     ).getTokenValue();
   }
 
+  // Este mét.odo solo se usa en esta clase por eso es privado
+  // Extract real role names and remove the `ROLE_` prefix
   private List<String> roles(Authentication auth) {
     return auth.getAuthorities().stream()
         .filter(authority -> !(authority instanceof FactorGrantedAuthority))
