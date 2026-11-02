@@ -1,4 +1,4 @@
-package com.fluffyyarn.store.security;
+package com.fluffyyarn.store.security.infrastructure.adapter.in.controller;
 
 import com.fluffyyarn.store.security.application.port.in.TokenBlocklistPort;
 import com.fluffyyarn.store.security.application.port.in.TokenGeneratorPort;
@@ -35,11 +35,7 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  /* Contrato de salida (serializa: código a JSON - RESPONSE).
-  Convierte el objeto Java del backend en la respuesta JSON
-  que se enviará al cliente HTTP. */
   public TokenResponseDto login(@RequestBody @Valid LoginRequestDto requestDto) {
-    // Este authenticationManager se inyecta desde el SecurityConfig
     Authentication auth = authenticationManager.authenticate(
         UsernamePasswordAuthenticationToken.unauthenticated(
             requestDto.username(),
@@ -49,12 +45,11 @@ public class AuthController {
     return new TokenResponseDto(
         tokenGeneratorPort.generate(auth),
         "Bearer",
-        TokenService.EXPIRES_IN_SECONDS
+        com.fluffyyarn.store.security.application.service.TokenGeneratorService.EXPIRES_IN_SECONDS
     );
   }
 
   @PostMapping("/logout")
-  // la anotación @AuthenticationPrincipal trae el objeto con toda la información del usuario que está conectado
   public void logout(@AuthenticationPrincipal Jwt jwt) {
     String jti = jwt.getClaimAsString("jti");
     Instant expiresAt = jwt.getExpiresAt();
@@ -63,9 +58,6 @@ public class AuthController {
     }
   }
 
-  /* Contrato de entrada payload (deserializa: JSON a código - PAYLOAD)
-  para la ruta de inicio de sesión. Convierte el JSON de la petición HTTP
-  en un objeto Java en memoria para procesarlo en el backend. */
   public record LoginRequestDto(
       @NotBlank(message = "El username es obligatorio") String username,
       @NotBlank(message = "El password es obligatorio") String password) {

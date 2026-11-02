@@ -1,4 +1,4 @@
-package com.fluffyyarn.store.security;
+package com.fluffyyarn.store.security.infrastructure.adapter.in.filter;
 
 import com.fluffyyarn.store.security.application.port.in.TokenBlocklistPort;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Map;
 
-// OncePerRequestFilter - clase especial de Spring que intercepta todas y cada una de las peticiones HTTP que llegan al servidor, ejecuta el metodo central doFilterInternal.
 public class TokenBlocklistFilter extends OncePerRequestFilter {
 
   private final TokenBlocklistPort blocklistPort;
@@ -31,7 +30,6 @@ public class TokenBlocklistFilter extends OncePerRequestFilter {
       FilterChain filterChain
   ) throws ServletException, IOException {
 
-    // contexto de seguridad de Spring para ver si hay un token válido y si el usuario ya pasó la autenticación inicial.
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
     if (auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof Jwt jwt) {
@@ -50,7 +48,6 @@ public class TokenBlocklistFilter extends OncePerRequestFilter {
       }
     }
 
-    //Si el token no está en la lista negra (o si la petición es pública y no lleva token), el filtro le da luz verde (filterChain.doFilter) para que la petición continúe su camino normal hacia el controlador que corresponda.
     filterChain.doFilter(request, response);
   }
 }

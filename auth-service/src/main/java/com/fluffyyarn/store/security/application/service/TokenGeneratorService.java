@@ -1,4 +1,4 @@
-package com.fluffyyarn.store.security;
+package com.fluffyyarn.store.security.application.service;
 
 import com.fluffyyarn.store.security.application.port.in.TokenGeneratorPort;
 import org.springframework.security.core.Authentication;
@@ -16,36 +16,31 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
-// Este servicio es donde se definen los claims que van a estar dentro del JWT
 @Service
-public class TokenService implements TokenGeneratorPort {
+public class TokenGeneratorService implements TokenGeneratorPort {
 
   public static final long EXPIRES_IN_MINUTES = 60;
   public static final long EXPIRES_IN_SECONDS = EXPIRES_IN_MINUTES * 60;
 
   private final JwtEncoder encoder;
 
-  public TokenService(JwtEncoder encoder) {
+  public TokenGeneratorService(JwtEncoder encoder) {
     this.encoder = encoder;
   }
 
-  // Genera el token a partir de una autenticacion ya validada.
   @Override
   public String generate(Authentication auth) {
     Instant now = Instant.now();
 
-    // payload { "iss": "fluffy-yarn-store", "exp": "14134124412", ... }
-    // ESto es lo que constituye el cuerpo y contenido del token JWT (JSON Web Token).
     JwtClaimsSet claims = JwtClaimsSet.builder()
         .issuer("fluffy-yarn-store")
         .subject(auth.getName())
-        .issuedAt(now) // Genera un identificador universal único
+        .issuedAt(now)
         .expiresAt(now.plus(EXPIRES_IN_MINUTES, ChronoUnit.MINUTES))
         .claim("jti", UUID.randomUUID().toString())
         .claim("roles", roles(auth))
         .build();
 
-    // El header dice con qué algoritmo se codificó el token.
     JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
 
     return encoder.encode(
@@ -56,14 +51,8 @@ public class TokenService implements TokenGeneratorPort {
     ).getTokenValue();
   }
 
-  // Este mét.odo solo se usa en esta clase por eso es privado
-  // Extract real role names and remove the `ROLE_` prefix
   private List<String> roles(Authentication auth) {
     return auth.getAuthorities().stream()
-        // Spring Security 7 agrega solo un FactorGrantedAuthority("FACTOR_PASSWORD")
-        // a todo login con contraseña: dice con qué factor se autenticó, no es un
-        // rol. Si se mapea igual, termina en el claim "roles" y del otro lado el
-        // JwtGrantedAuthoritiesConverter lo vuelve ROLE_FACTOR_PASSWORD.
         .filter(authority -> !(authority instanceof FactorGrantedAuthority))
         .map(GrantedAuthority::getAuthority)
         .map(role -> role.replace("ROLE_", ""))

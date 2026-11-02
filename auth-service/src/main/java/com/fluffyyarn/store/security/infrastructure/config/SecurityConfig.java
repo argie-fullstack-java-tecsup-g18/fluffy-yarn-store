@@ -1,6 +1,7 @@
-package com.fluffyyarn.store.security;
+package com.fluffyyarn.store.security.infrastructure.config;
 
 import com.fluffyyarn.store.security.application.port.in.TokenBlocklistPort;
+import com.fluffyyarn.store.security.infrastructure.adapter.in.filter.TokenBlocklistFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

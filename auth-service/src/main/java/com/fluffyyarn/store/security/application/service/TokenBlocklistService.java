@@ -1,4 +1,4 @@
-package com.fluffyyarn.store.security;
+package com.fluffyyarn.store.security.application.service;
 
 import com.fluffyyarn.store.security.application.port.in.TokenBlocklistPort;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -15,6 +15,7 @@ public class TokenBlocklistService implements TokenBlocklistPort {
   // En Redis, los datos se guardan como pares de "clave-valor".
   private static final String PREFIX = "blocklist:";
 
+  // Este hace de adaptador de salida por eso no necesito un Repository.
   // StringRedisTemplate herramienta oficial que provee Spring para leer y escribir textos planos en la DB de Redis
   private final StringRedisTemplate redisTemplate;
 
@@ -36,6 +37,7 @@ public class TokenBlocklistService implements TokenBlocklistPort {
   @Override
   public boolean isBlocklisted(String jti) {
     // Valida si existe el registro de jti
+    // TODO que pasa si el servicio falla y este Boolean al ser un obj wrapper, viene en null??
     return Boolean.TRUE.equals(redisTemplate.hasKey(PREFIX + jti));
   }
 }
