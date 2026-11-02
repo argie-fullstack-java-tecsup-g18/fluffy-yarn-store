@@ -39,6 +39,7 @@ public class AuthController {
   Convierte el objeto Java del backend en la respuesta JSON
   que se enviará al cliente HTTP. */
   public TokenResponseDto login(@RequestBody @Valid LoginRequestDto requestDto) {
+    // Este authenticationManager se inyecta desde el SecurityConfig
     Authentication auth = authenticationManager.authenticate(
         UsernamePasswordAuthenticationToken.unauthenticated(
             requestDto.username(),
