@@ -121,36 +121,107 @@ spring.jpa.show-sql=true`
 > Los servicios `auth-service`, `customer-service`, `mysql`, `postgres`, `redis` y la red compartida ya están definidos
 > en el **Paso 0.4**. Esta sección solo cubre lo que queda fuera de ese paso.
 
-> **Nota sobre Spring Cloud:** Actualmente **no hay ninguna dependencia de Spring Cloud** en los proyectos
-> (`auth-service/pom.xml` y `customer-service/pom.xml` no contienen `spring-cloud-starter-*` ni
-> `spring-cloud-dependencies`). Para usar Spring Cloud Gateway como API Gateway es necesario:
->
-> 1. Agregar el BOM de Spring Cloud en `<dependencyManagement>` de cada servicio (o del módulo gateway):
->    ```xml
->    <dependency>
->        <groupId>org.springframework.cloud</groupId>
->        <artifactId>spring-cloud-dependencies</artifactId>
->        <version>2023.0.0</version>
->        <type>pom</type>
->        <scope>import</scope>
->    </dependency>
->    ```
-> 2. Agregar `spring-cloud-starter-gateway` al servicio que actuará como gateway (puede ser un módulo nuevo
->    `gateway-service` o uno existente).
-> 3. Configurar las rutas en `application.properties`/`application.yml`, por ejemplo:
->    ```properties
->    spring.cloud.gateway.routes[0].id=auth-service
->    spring.cloud.gateway.routes[0].uri=http://auth-service:8080
->    spring.cloud.gateway.routes[0].predicates=Path=/auth/**
->    spring.cloud.gateway.routes[1].id=customer-service
->    spring.cloud.gateway.routes[1].uri=http://customer-service:8080
->    spring.cloud.gateway.routes[1].predicates=Path=/customers/**
->    ```
+### 1.1 Stack Spring Cloud (requerimientos del profesor)
 
-- [ ] **Dockerfile por servicio**: crear Dockerfile dedicado en auth-service y customer-service (actualmente solo existe
-  uno en la raíz para el monolito) ✅ (creados en `auth-service/Dockerfile` y `customer-service/Dockerfile`)
-- [ ] **API Gateway**: agregar Spring Cloud Gateway como punto de entrada único (ruteo `/auth/**` → auth-service,
-  `/customers/**` → customer-service)
+Actualmente **no hay ninguna dependencia de Spring Cloud** en los proyectos
+(`auth-service/pom.xml` y `customer-service/pom.xml` no contienen `spring-cloud-starter-*` ni
+`spring-cloud-dependencies`). Los tres componentes requeridos son:
+
+#### A) Config Server (centralización de propiedades)
+
+Sirve para externalizar la configuración de todos los servicios en un solo lugar (`jwt.secret`,
+`spring.data.redis.*`, `DB_URL`, etc.) en lugar de tenerla en cada `application.properties`.
+
+**Dependencias necesarias:**
+```xml
+<!-- En el servidor de configuración (módulo config-server nuevo) -->
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-config-server</artifactId>
+</dependency>
+
+<!-- En cada cliente (auth-service, customer-service, gateway) -->
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-config</artifactId>
+</dependency>
+```
+
+**Pasos:**
+1. Crear un nuevo módulo `config-server` con `@EnableConfigServer`.
+2. Definir el backend de configuración (Git local, repositorio remoto, o sistema de archivos).
+3. En cada servicio cliente, agregar `spring.cloud.config.uri=http://config-server:8888` en `bootstrap.yml`.
+4. Los servicios leerán sus propiedades al arrancar desde el Config Server.
+
+#### B) API Gateway (Spring Cloud Gateway)
+
+Punto de entrada único para todo el tráfico externo. Ruta las peticiones a los servicios internos.
+
+**Dependencias necesarias:**
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-gateway</artifactId>
+</dependency>
+```
+
+**Pasos:**
+1. Crear un nuevo módulo `gateway-service` con `@EnableGateway`.
+2. Configurar rutas en `application.yml`:
+   ```yaml
+   spring:
+     cloud:
+       gateway:
+         routes:
+           - id: auth-service
+             uri: http://auth-service:8080
+             predicates:
+               - Path=/auth/**
+           - id: customer-service
+             uri: http://customer-service:8080
+             predicates:
+               - Path=/customers/**
+   ```
+3. Los clientes llaman al Gateway (puerto único, ej. 8080) en lugar de llamar directamente a cada servicio.
+
+#### C) OpenFeign (cliente HTTP inter-servicios)
+
+Permite que `customer-service` llame a `auth-service` de forma declarativa (interfaz Java con anotaciones)
+en lugar de usar `RestTemplate` manualmente.
+
+**Dependencias necesarias:**
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-openfeign</artifactId>
+</dependency>
+```
+
+**Pasos:**
+1. Agregar `@EnableFeignClients` en la clase principal de `customer-service`.
+2. Crear interfaces Feign con `@FeignClient(name = "auth-service", url = "${auth.service.url}")`.
+3. Usar esas interfaces en los servicios/casos de uso de customer para validar usuarios, roles, etc.
+
+---
+
+**Instalación del BOM de Spring Cloud (requerido para los tres componentes):**
+Agregar en `<dependencyManagement>` de cada módulo que use Spring Cloud:
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-dependencies</artifactId>
+    <version>2023.0.0</version>
+    <type>pom</type>
+    <scope>import</scope>
+</dependency>
+```
+
+---
+
+- [ ] **Dockerfile por servicio**: crear Dockerfile dedicado en auth-service y customer-service ✅ (creados en `auth-service/Dockerfile` y `customer-service/Dockerfile`)
+- [ ] **Config Server**: crear módulo `config-server` con `spring-cloud-config-server` y configurar clientes en `bootstrap.yml`
+- [ ] **API Gateway**: crear módulo `gateway-service` con `spring-cloud-starter-gateway` y definir rutas `/auth/**` → auth-service, `/customers/**` → customer-service
+- [ ] **OpenFeign**: agregar `spring-cloud-starter-openfeign` a customer-service y crear clientes Feign para consultar auth-service
 - [ ] **Service Discovery**: agregar Eureka/Consul o similar para que los servicios se localicen dinámicamente
 
 ## 2. Base de datos y datos (bounded contexts)
