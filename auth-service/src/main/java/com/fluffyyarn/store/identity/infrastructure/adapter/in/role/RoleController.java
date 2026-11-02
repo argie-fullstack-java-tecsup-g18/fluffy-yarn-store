@@ -36,9 +36,25 @@ public class RoleController {
   @PreAuthorize("hasRole('ADMIN')")
   @ResponseStatus(HttpStatus.CREATED)
   public RoleDto create(@Valid @RequestBody RoleDto request) {
-    return RoleWebMapper.toRoleDto(this.createRoleUseCase.create(
-        RoleWebMapper.toCommand(request)));
+    return RoleWebMapper.toRoleDto(
+        //Spring está redirigiendo esa llamada directamente al métod0 create de tu RoleService.
+        this.createRoleUseCase.create(
+            RoleWebMapper.toCommand(request)
+        )
+    );
   }
+  //  luego de que esa funcion del controller haga toda esa conversion de request a un RoleDto
+  //  se le envia el DTO al usuario
+  // no veo donde entra el servicio aqui:
+//  El servicio SÍ está ahí, oculto justo en el corazón de esa línea,
+//  representado por this.createRoleUseCase.create(...).
+//  Recuerda que createRoleUseCase es el Puerto de Entrada (la interfaz),
+//  pero la variable this.createRoleUseCase en realidad está apuntando
+//  por debajo a la clase de servicio (RoleServiceImpl),
+//  que es la única que implementa ese puerto (nuestro Guardia Ejecutor).
+
+
+
 
   @PatchMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")

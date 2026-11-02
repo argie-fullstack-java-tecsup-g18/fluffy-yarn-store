@@ -38,6 +38,7 @@ public class RoleService implements CreateRoleUseCase, GetRoleUseCase, UpdateRol
         .name(cmd.getName())
         .description(cmd.getDescription())
         .build();
+
     return this.repository.save(role);
   }
 

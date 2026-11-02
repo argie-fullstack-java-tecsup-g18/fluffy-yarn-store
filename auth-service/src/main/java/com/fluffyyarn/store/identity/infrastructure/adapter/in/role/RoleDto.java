@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+// POR AQUI PASA EL REQUEST Y SE VALIDA Permite aplicar reglas o anotaciones
+// (por ejemplo, verificar que un correo sea válido, que un campo no esté vacío o que un número esté en un rango) antes de que los datos lleguen a la lógica de negocio
+
 // Aquí se hacen las validaciones de los campos que llegan del front.
 @Data // Lombok - Genera getters, setters, toString, equals y hashCode.
 @NoArgsConstructor // Lombok - Constructor vacío. Jackson lo necesita para deserializar el JSON que llega del front.

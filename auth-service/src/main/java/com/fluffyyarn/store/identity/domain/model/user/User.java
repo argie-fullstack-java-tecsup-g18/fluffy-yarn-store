@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 // Lombok - Permite crear objetos de dominio con un patrón Builder de forma limpia y fluida. Útil en Arquitectura Hexagonal.
 public class User {
-  private Integer id; // TODO: Preguntar: por qué el profe usa LONG?
+  private Long id;
   private String username;
   private String password;
   private boolean isEnabled;

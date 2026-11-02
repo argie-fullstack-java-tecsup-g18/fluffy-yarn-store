@@ -6,6 +6,7 @@ import com.fluffyyarn.store.identity.domain.model.role.RoleName;
 import java.util.List;
 import java.util.Optional;
 
+// Puerto de salida del dominio a la DB o Framework
 // RepositoryPort: Declara los métodos que van a ser implementados por RolePersistencyAdapter para guardar y leer roles.
 // El servicio es el que va a orquestar guardar y leer pero no debe saber que es MySQL.  Es el "qué se necesita del mundo exterior", no el "cómo".
 // PORT = REPOSITORY
