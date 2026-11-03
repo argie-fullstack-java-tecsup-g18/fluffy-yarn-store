@@ -76,6 +76,17 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- Soporte de PostgreSQL para Flyway: desde Flyway 10 el soporte por
+             base de datos vive en módulos separados. Sin este módulo el arranque
+             falla con "Unsupported Database: PostgreSQL 15.x". (customer-service
+             usa el equivalente flyway-mysql y por eso arrancaba bien.) -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+            <version>13.2.0</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- En Spring Boot 4 las autoconfiguraciones se reparten en modulos por
              tecnologia: flyway-core da las clases de Flyway, pero quien ejecuta las
              migraciones al arrancar es FlywayAutoConfiguration, que esta en este
