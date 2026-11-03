@@ -81,6 +81,9 @@ services:
     ports:
       - "8081:8080"
     environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/auth_db
+      SERVER_PORT: 8080
       DB_URL: jdbc:postgresql://postgres:5432/auth_db
       DB_USERNAME: postgres
       DB_PASSWORD: '${DB_PASSWORD:?falta DB_PASSWORD, ejecuta cp .env.example .env}'
@@ -94,6 +97,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      config-server:
+        condition: service_healthy
 
   # 5. customer-service (MySQL + Redis)
   customer-service:
@@ -103,6 +108,9 @@ services:
     ports:
       - "8082:8080"
     environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/fluffy_yarn_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SERVER_PORT: 8080
       DB_URL: jdbc:mysql://mysql:3306/fluffy_yarn_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       DB_USERNAME: ${DB_USERNAME:-root}
       DB_PASSWORD: '${DB_PASSWORD:?falta DB_PASSWORD, ejecuta cp .env.example .env}'
@@ -113,6 +121,8 @@ services:
       mysql:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      config-server:
         condition: service_healthy
 
 volumes:
