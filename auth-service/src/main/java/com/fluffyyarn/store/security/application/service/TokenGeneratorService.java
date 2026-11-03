@@ -1,6 +1,7 @@
 package com.fluffyyarn.store.security.application.service;
 
 import com.fluffyyarn.store.security.application.port.in.TokenGeneratorPort;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.FactorGrantedAuthority;
@@ -20,13 +21,26 @@ import java.util.UUID;
 @Service
 public class TokenGeneratorService implements TokenGeneratorPort {
 
-  public static final long EXPIRES_IN_MINUTES = 60;
-  public static final long EXPIRES_IN_SECONDS = EXPIRES_IN_MINUTES * 60;
+  // Default en código: 60 minutos. En runtime gana la propiedad
+  // app.jwt.expiration-minutes (la entrega el Config Server con la base del
+  // config-repo, y puede sobrescribirse por perfil o por .env / env vars).
+  private final long expiresInMinutes;
 
   private final JwtEncoder encoder;
 
-  public TokenGeneratorService(JwtEncoder encoder) {
+  // La expiración se inyecta, no se hardcodea: así el valor vive en el config-repo
+  // (app.jwt.expiration-minutes) y de verdad cambia por entorno sin recompilar.
+  public TokenGeneratorService(
+      JwtEncoder encoder,
+      @Value("${app.jwt.expiration-minutes:60}") long expiresInMinutes
+  ) {
     this.encoder = encoder;
+    this.expiresInMinutes = expiresInMinutes;
+  }
+
+  @Override
+  public long expiresInMinutes() {
+    return expiresInMinutes;
   }
 
   // Genera el token a partir de una autenticacion ya validada.
@@ -38,7 +52,7 @@ public class TokenGeneratorService implements TokenGeneratorPort {
         .issuer("fluffy-yarn-store")
         .subject(auth.getName())
         .issuedAt(now)
-        .expiresAt(now.plus(EXPIRES_IN_MINUTES, ChronoUnit.MINUTES))
+        .expiresAt(now.plus(expiresInMinutes, ChronoUnit.MINUTES))
         // payload { "iss": "fluffy-yarn-store", "exp": "14134124412", ... }
         // ESto es lo que constituye el cuerpo y contenido del token JWT (JSON Web Token).
         .claim("jti", UUID.randomUUID().toString())

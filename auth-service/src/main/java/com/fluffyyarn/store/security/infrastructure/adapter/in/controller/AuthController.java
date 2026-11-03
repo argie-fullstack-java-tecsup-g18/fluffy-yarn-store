@@ -50,7 +50,7 @@ public class AuthController {
     return new TokenResponseDto(
         tokenGeneratorPort.generate(auth),
         "Bearer",
-        com.fluffyyarn.store.security.application.service.TokenGeneratorService.EXPIRES_IN_SECONDS
+        tokenGeneratorPort.expiresInMinutes() * 60
     );
   }
 
