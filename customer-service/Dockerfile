@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # ---- Build stage ----
-FROM eclipse-temurin:21-jdk-alpine AS builder
+FROM eclipse-temurin:25-jdk-alpine AS builder
 WORKDIR /app
 
 # Copiar archivos de configuración de Maven
@@ -17,7 +17,7 @@ COPY src src
 RUN ./mvnw package -DskipTests -q
 
 # ---- Runtime stage ----
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
 WORKDIR /app
 
 # Copiar el JAR generado en la etapa de build
