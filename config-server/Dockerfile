@@ -1,0 +1,32 @@
+# syntax=docker/dockerfile:1
+
+# ---- Build stage ----
+FROM eclipse-temurin:25-jdk-alpine AS builder
+WORKDIR /app
+
+# Copiar archivos de configuración de Maven
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+
+# Descargar dependencias (capa cacheable)
+RUN ./mvnw dependency:go-offline -q
+
+# Copiar código fuente y compilar
+COPY src src
+RUN ./mvnw package -DskipTests -q
+
+# ---- Runtime stage ----
+FROM eclipse-temurin:25-jre-alpine
+WORKDIR /app
+
+# Copiar el JAR generado en la etapa de build
+COPY --from=builder /app/target/*.jar app.jar
+
+# El config-repo se monta como volumen en docker-compose (./config-repo:/app/config-repo:ro)
+# CONFIG_REPO_PATH apunta ahí; se puede sobrescribir desde compose.
+ENV CONFIG_REPO_PATH=/app/config-repo
+
+EXPOSE 8888
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
