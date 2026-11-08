@@ -38,6 +38,11 @@ build/
 .env.*
 !.env.example
 
+### Archivos no necesarios para el repositorio ###
+bruno/
+manual_test/
+pendientes.txt
+
 ### Sistema ###
 .DS_Store
 Thumbs.db
