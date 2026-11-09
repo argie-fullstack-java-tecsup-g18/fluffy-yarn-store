@@ -150,6 +150,18 @@ services:
       config-server:
         condition: service_healthy
 
+  # 7. gateway-service (API Gateway)
+  gateway-service:
+    build: ./gateway-service
+    container_name: fluffy-yarn-gateway
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-service
+      - customer-service
+      - commercial-service
+
 volumes:
   fluffy_yarn_data:
   fluffy_yarn_postgres_data:

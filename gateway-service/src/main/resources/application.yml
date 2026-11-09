@@ -3,15 +3,21 @@ spring:
     name: gateway-service
   cloud:
     gateway:
-      routes:
-        - id: auth-service
-          uri: http://auth-service:8080
-          predicates:
-            - Path=/auth/**
-        - id: customer-service
-          uri: http://customer-service:8080
-          predicates:
-            - Path=/customers/**
+      server:
+        webflux:
+          routes:
+            - id: auth-service
+              uri: http://auth-service:8080
+              predicates:
+                - Path=/auth/**
+            - id: customer-service
+              uri: http://customer-service:8080
+              predicates:
+                - Path=/customers/**
+            - id: commercial-service
+              uri: http://commercial-service:8080
+              predicates:
+                - Path=/commercial/**
 
 server:
   port: 8080
