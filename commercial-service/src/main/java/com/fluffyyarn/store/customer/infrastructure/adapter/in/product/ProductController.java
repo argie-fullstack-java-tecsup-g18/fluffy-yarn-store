@@ -16,7 +16,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/commercial/products")
 public class ProductController {
 
   private final CreateProductUseCase createProductUseCase;
