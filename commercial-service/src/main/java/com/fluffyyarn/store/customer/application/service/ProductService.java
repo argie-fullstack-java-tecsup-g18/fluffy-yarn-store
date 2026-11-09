@@ -2,6 +2,7 @@ package com.fluffyyarn.store.customer.application.service;
 
 import com.fluffyyarn.store.customer.application.port.in.product.CreateProductCommand;
 import com.fluffyyarn.store.customer.application.port.in.product.UpdateProductCommand;
+import com.fluffyyarn.store.customer.application.port.out.user.UserVerificationPort;
 import com.fluffyyarn.store.customer.infrastructure.adapter.in.product.ProductResponse;
 import com.fluffyyarn.store.customer.application.port.in.product.CreateProductUseCase;
 import com.fluffyyarn.store.customer.application.port.in.product.DeleteProductUseCase;
@@ -21,14 +22,18 @@ import java.util.List;
 public class ProductService implements CreateProductUseCase, UpdateProductUseCase, GetProductUseCase, ListProductUseCase, DeleteProductUseCase {
 
   private final ProductRepositoryPort repository;
+  private final UserVerificationPort userVerificationPort;
 
-  public ProductService(ProductRepositoryPort repository) {
+  public ProductService(ProductRepositoryPort repository, UserVerificationPort userVerificationPort) {
     this.repository = repository;
+    this.userVerificationPort = userVerificationPort;
   }
 
   @Override
   @Transactional
   public ProductResponse create(CreateProductCommand command) {
+    this.userVerificationPort.assertCallerIsLiveAdmin();
+
     if (repository.existsBySku(command.getSku())) {
       throw new DuplicateProductException("Ya existe un producto con SKU " + command.getSku());
     }
@@ -50,6 +55,8 @@ public class ProductService implements CreateProductUseCase, UpdateProductUseCas
   @Override
   @Transactional
   public ProductResponse update(Long id, UpdateProductCommand command) {
+    this.userVerificationPort.assertCallerIsLiveAdmin();
+
     Product product = repository.findById(id)
         .orElseThrow(() -> new ProductNotFoundException("Producto con id " + id + " no encontrado."));
 
@@ -89,6 +96,8 @@ public class ProductService implements CreateProductUseCase, UpdateProductUseCas
   @Override
   @Transactional
   public void delete(Long id) {
+    this.userVerificationPort.assertCallerIsLiveAdmin();
+
     if (!repository.findById(id).isPresent()) {
       throw new ProductNotFoundException("Producto con id " + id + " no encontrado.");
     }
