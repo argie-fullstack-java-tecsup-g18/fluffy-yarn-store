@@ -1,7 +1,9 @@
 package com.fluffyyarn.store.exception;
 
 import com.fluffyyarn.store.customer.domain.exception.DuplicateProductException;
+import com.fluffyyarn.store.customer.domain.exception.ExternalServiceException;
 import com.fluffyyarn.store.customer.domain.exception.ProductNotFoundException;
+import com.fluffyyarn.store.customer.domain.exception.StaleRoleException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -24,6 +26,16 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(DuplicateProductException.class)
   public ResponseEntity<Map<String, Object>> handleDuplicate(DuplicateProductException ex) {
     return build(HttpStatus.CONFLICT, ex.getMessage());
+  }
+
+  @ExceptionHandler(StaleRoleException.class)
+  public ResponseEntity<Map<String, Object>> handleStaleRole(StaleRoleException ex) {
+    return build(HttpStatus.FORBIDDEN, ex.getMessage());
+  }
+
+  @ExceptionHandler(ExternalServiceException.class)
+  public ResponseEntity<Map<String, Object>> handleExternalService(ExternalServiceException ex) {
+    return build(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
